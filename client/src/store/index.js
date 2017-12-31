@@ -31,8 +31,23 @@ export const store = new Vuex.Store({
       gymId: 's;dnasldnal'
     }
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    createBoulder (state, payload) {
+      state.loadedBoulders.push(payload)
+    }
+  },
+  actions: {
+    createBoulder ({commit}, payload) {
+      const boulder = {
+        title: payload.name,
+        grade: payload.grade,
+        image: payload.image,
+        description: payload.description
+      }
+      // Reach out to firebase and store it
+      commit('createBoulder', boulder)
+    }
+  },
   getters: {
     loadedBoulders (state) {
       return state.loadedBoulders.sort((boulderA, boulderB) => {
