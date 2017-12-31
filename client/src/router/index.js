@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Boulders from '@/components/boulders/Boulders'
+import Boulder from '@/components/boulders/Boulder'
 import CreateBoulder from '@/components/boulders/CreateBoulder'
 import Profile from '@/components/user/Profile'
 import Register from '@/components/user/Register'
@@ -25,6 +26,12 @@ export default new Router({
       path: '/boulders/new',
       name: 'CreateBoulder',
       component: CreateBoulder
+    },
+    {
+      path: '/boulder/:id',
+      name: 'Boulder',
+      props: true,
+      component: Boulder
     },
     {
       path: '/profile',

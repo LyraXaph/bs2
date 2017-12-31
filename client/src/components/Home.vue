@@ -8,13 +8,14 @@
         <v-btn large router to="/boulders/new" info>Add boulder</v-btn>  
       </v-flex>
     </v-layout>
-    <v-layout>
+    <v-layout row wrap class="mt-2">
       <v-flex xs12>
-        <v-carousel>
+        <v-carousel style="cursor:pointer">
           <v-carousel-item
             v-for="(boulder, i) in boulders" 
             v-bind:src="boulder.image"
-            :key="boulder.id">
+            :key="boulder.id"
+            @click="onLoadBoulder(boulder.id)">
             <div class="title">
               {{ boulder.title }}
             </div>
@@ -32,13 +33,14 @@
 
 <script>
 export default {
-  data () {
-    return {
-      boulders: [
-        { image: 'https://spotsettingblog.files.wordpress.com/2012/08/img_1469.jpg', id: 'blabla', title: 'Toughest' },
-        { image: 'http://www.xtremego.com/wp-content/uploads/2014/05/xtremgo-4-925x320.jpg', id: 'blablsdasaa', title: 'EasyOne' },
-        { image: 'http://4.bp.blogspot.com/-1dc_dPrvLd8/VFeue1fQ67I/AAAAAAAAAPY/5u8m8PG2oqA/s1600/PLafon.jpg', id: 'sdasdablabla', title: 'Middle ground' }
-      ]
+  computed: {
+    boulders () {
+      return this.$store.getters.featuredBoulders
+    }
+  },
+  methods: {
+    onLoadBoulder (id) {
+      this.$router.push('/boulder/' + id)
     }
   }
 }

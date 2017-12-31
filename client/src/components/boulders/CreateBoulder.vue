@@ -1,5 +1,5 @@
 <template>
-  <p>The create meetup page</p>
+  <p>The create boulder page</p>
 </template>
 
 <script>
