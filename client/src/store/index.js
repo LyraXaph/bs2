@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Api from '@/services/Api'
 
 Vue.use(Vuex)
 
@@ -25,15 +26,14 @@ export const store = new Vuex.Store({
         grade: 10
       }
     ],
-    user: {
-      id: 'dnlaksnda',
-      climbedBoulders: [],
-      gymId: 's;dnasldnal'
-    }
+    user: null
   },
   mutations: {
     createBoulder (state, payload) {
       state.loadedBoulders.push(payload)
+    },
+    setUser (state, payload) {
+      state.user = payload
     }
   },
   actions: {
@@ -46,6 +46,34 @@ export const store = new Vuex.Store({
       }
       // Reach out to firebase and store it
       commit('createBoulder', boulder)
+    },
+    async registerUser ({commit}, payload) {
+      try {
+        const response = await Api().post('users/register', payload)
+        const user = response.data.user
+        const newUser = {
+          id: user.id,
+          climbedBoulders: [],
+          gymId: user.gym
+        }
+        commit('setUser', newUser)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async signInUser ({commit}, payload) {
+      try {
+        const response = await Api().post('users/login', payload)
+        const user = response.data.user
+        const newUser = {
+          id: user.id,
+          climbedBoulders: [],
+          gymId: user.gym
+        }
+        commit('setUser', newUser)
+      } catch (error) {
+        console.log(error)
+      }
     }
   },
   getters: {
@@ -63,6 +91,9 @@ export const store = new Vuex.Store({
     },
     featuredBoulders (state, getters) {
       return getters.loadedBoulders.slice(0, 5)
+    },
+    user (state) {
+      return state.user
     }
   }
 })

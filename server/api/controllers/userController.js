@@ -84,7 +84,12 @@ exports.login = async (req, res, next) => {
             );
             return res.status(200).json({
                 message: "Auth successful", 
-                token: token
+                token: token,
+                user: { 
+                    email: user.email,
+                    id: user._id,
+                    gym: user.gym
+                }
             });
         } else {
             return res.status(500).json({message: "Auth sadafailed"});

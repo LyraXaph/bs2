@@ -46,14 +46,26 @@
   export default {
     data () {
       return {
-        sideNav: false,
-        menuItems: [
-          { icon: 'trending_up', title: 'View Boulders', link: '/boulders' },
-          { icon: 'person', title: 'Profile', link: '/profile' },
-          { icon: 'room', title: 'View Gyms', link: '/gyms' },
+        sideNav: false
+      }
+    },
+    computed: {
+      menuItems () {
+        let menuItems = [
           { icon: 'face', title: 'Register', link: '/register' },
           { icon: 'lock_open', title: 'Sign in', link: '/signin' }
         ]
+        if (this.userIsAuthenticated) {
+          menuItems = [
+            { icon: 'trending_up', title: 'View Boulders', link: '/boulders' },
+            { icon: 'room', title: 'View Gyms', link: '/gyms' },
+            { icon: 'person', title: 'Profile', link: '/profile' }
+          ]
+        }
+        return menuItems
+      },
+      userIsAuthenticated () {
+        return this.$store.getters.user !== null && this.$store.getters.user !== undefined
       }
     }
   }
