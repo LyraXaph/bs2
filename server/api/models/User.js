@@ -10,7 +10,7 @@ const userSchema = new Schema({
         unique: true, 
         lowercase: true,
         trim: true,
-        validate: validator.isEmail , 
+        validate: [validator.isEmail, 'Invalid Email Address'],  
         required: 'Please Supply an email address'
     }, 
     name: {
@@ -18,7 +18,10 @@ const userSchema = new Schema({
         //required: 'Please supply a name', 
         trim: true
     }, 
-    password: {type:String, required:true},
+    password: {
+        type: String,
+        required: true
+    },
     gym: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Gym',

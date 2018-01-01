@@ -20,7 +20,7 @@ const boulderSchema = new Schema({
         type: Date, 
         dafault: Date.now
     }, 
-    photo: String, 
+    image: String, 
    /*  author: {
         type: mongoose.Schema.ObjectId,
         ref: 'User', 

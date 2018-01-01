@@ -58,10 +58,13 @@ exports.getBoulders =  async (req, res) => {
 }
 
 exports.createBoulder = async (req, res, next) => {
-    //console.log(req.file);
     try{
         const boulder = await (new Boulder(req.body)).save();
-        res.status(200).json({success: true, message: "Boulder successfully added!"});
+        res.status(200).json({
+            success: true,
+            message: "Boulder successfully added!",
+            boulderId: boulder._id
+        });
     }
     catch (err) {
         console.log(err);
@@ -78,10 +81,10 @@ exports.getBoulder = (req, res, next) => {
 exports.getBoulderBySlug = async (req, res, next) => {
     try{
         const boulder = await Boulder.findOne({slug : req.params.slug}).populate('author reviews');
-        res.status(200).send(boulder);
+        return res.status(200).send(boulder);
     } catch (err) {
         console.log(err);
-        res.status(500).json({error:err});
+        return res.status(500).json({error:err});
     }
 }
 
@@ -94,14 +97,20 @@ exports.updateBoulder = async (req, res, next) => {
             {new: true, // return the updated Boulder instead of the old one
             runValidators: true}
         );
-        res.status(200).send(boulder);
+        return res.status(200).send(boulder);
     } catch (error) {
         res.status(500).send(error);
     }
 }
 
 exports.deleteBoulder = async (req, res, next) => {
-    res.status(200).json({
-        message: `you deleted boulder with id ${req.params.boulderId}`
-    })
+    try {
+        await Boulder.findOneAndRemove({_id: req.params.boulderId});
+        return res.status(200).json({
+            message: `you deleted boulder with id ${req.params.boulderId}`
+        })
+     } catch(err) {
+         console.log(err);
+         return res.send(err);
+     }
 }

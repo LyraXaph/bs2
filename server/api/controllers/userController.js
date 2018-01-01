@@ -44,20 +44,26 @@ exports.register = async (req, res, next) => {
             const hash = await bcrypt.hashSync(req.body.password, 10);
             req.body.password = hash;
             req.body.gym = '59ece0c7dd8ba60590437e5c';
-            user = await (new User(req.body)).save();
-            return res.status(201).json({
-                user: user,
-                message: 'User created'
-            });
+            try {
+                user = await (new User(req.body)).save();
+                return res.status(201).json({
+                    user: user,
+                    message: 'User created'
+                });
+            } catch (err) {
+                return res.status(500).json({
+                    message: err.message
+                })
+            }
         } catch (err){
             console.log(err);
             return res.status(500).json({
-                error : err
+                message : err
             }); 
         }
     } else {
         return res.status(500).json({
-            error: "User already exists"
+            message: "User already exists"
         });
     }
 };
@@ -65,14 +71,12 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         let user = await User.findOne({email: req.body.email});
-        if (user.length < 1){
+        if (!user){
             return res.status(401).json({
                 message: "Auth failed"
             });
         } 
         const result = await bcrypt.compare(req.body.password, user.password);
-        console.log(req.body.password);
-        console.log(user.password)
         if(result){
             const token = jwt.sign({
                 email: user.email,
@@ -92,7 +96,7 @@ exports.login = async (req, res, next) => {
                 }
             });
         } else {
-            return res.status(500).json({message: "Auth sadafailed"});
+            return res.status(500).json({message: "Auth failed"});
         }
     } catch(err){
         console.log(err);

@@ -6,51 +6,83 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    loadedBoulders: [
-      {
-        image: 'https://spotsettingblog.files.wordpress.com/2012/08/img_1469.jpg',
-        id: 'blabla',
-        title: 'Toughest',
-        grade: 3
-      },
-      {
-        image: 'http://www.xtremego.com/wp-content/uploads/2014/05/xtremgo-4-925x320.jpg',
-        id: 'blablsdasaa',
-        title: 'EasyOne',
-        grade: 13
-      },
-      {
-        image: 'http://4.bp.blogspot.com/-1dc_dPrvLd8/VFeue1fQ67I/AAAAAAAAAPY/5u8m8PG2oqA/s1600/PLafon.jpg',
-        id: 'sdasdablabla',
-        title: 'Middle ground',
-        grade: 10
-      }
-    ],
-    user: null
+    loadedBoulders: [],
+    user: null,
+    loading: false,
+    error: null
   },
   mutations: {
+    setLoadedBoulders (state, payload) {
+      state.loadedBoulders = payload
+    },
     createBoulder (state, payload) {
       state.loadedBoulders.push(payload)
     },
+    deleteBoulder (state, payload) {
+      state.loadedBoulders.splice(state.loadedBoulders.indexOf(payload), 1)
+    },
     setUser (state, payload) {
       state.user = payload
+    },
+    setLoading (state, payload) {
+      state.loading = payload
+    },
+    setError (state, payload) {
+      state.error = payload
+    },
+    clearError (state) {
+      state.error = null
     }
   },
   actions: {
-    createBoulder ({commit}, payload) {
+    async loadBoulders ({commit}) {
+      commit('setLoading', true)
+      try {
+        const data = (await Api().get('boulders/')).data
+        commit('setLoadedBoulders', data)
+        commit('setLoading', false)
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        console.log(error.response.data.message)
+        commit('setLoading', false)
+      }
+    },
+    async createBoulder ({commit}, payload) {
       const boulder = {
         title: payload.name,
         grade: payload.grade,
         image: payload.image,
         description: payload.description
       }
-      // Reach out to firebase and store it
-      commit('createBoulder', boulder)
+      try {
+        const data = (await Api().post('boulders/', payload)).data
+        boulder._id = data.boulderId
+        commit('createBoulder', boulder)
+        console.log(data)
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        console.log(error.response.data.message)
+      }
+    },
+    async deleteBoulder ({commit}, payload) {
+      try {
+        await Api().delete(`boulders/${payload._id}`)
+        commit('deleteBoulder', payload)
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        console.log(error.response.data.message)
+      }
     },
     async registerUser ({commit}, payload) {
+      commit('setLoading', true)
+      commit('clearError')
       try {
         const response = await Api().post('users/register', payload)
         const user = response.data.user
+        commit('setLoading', false)
         const newUser = {
           id: user.id,
           climbedBoulders: [],
@@ -58,13 +90,18 @@ export const store = new Vuex.Store({
         }
         commit('setUser', newUser)
       } catch (error) {
-        console.log(error)
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        // console.log(error.response.data.message)
       }
     },
     async signInUser ({commit}, payload) {
+      commit('setLoading', true)
+      commit('clearError')
       try {
         const response = await Api().post('users/login', payload)
         const user = response.data.user
+        commit('setLoading', false)
         const newUser = {
           id: user.id,
           climbedBoulders: [],
@@ -72,8 +109,13 @@ export const store = new Vuex.Store({
         }
         commit('setUser', newUser)
       } catch (error) {
-        console.log(error)
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        // console.log(error.response.data.message)
       }
+    },
+    clearError ({commit}) {
+      commit('clearError')
     }
   },
   getters: {
@@ -85,7 +127,7 @@ export const store = new Vuex.Store({
     loadedBoulder (state) {
       return (boulderId) => {
         return state.loadedBoulders.find((boulder) => {
-          return boulder.id === boulderId
+          return boulder._id === boulderId
         })
       }
     },
@@ -94,6 +136,12 @@ export const store = new Vuex.Store({
     },
     user (state) {
       return state.user
+    },
+    loading (state) {
+      return state.loading
+    },
+    error (state) {
+      return state.error
     }
   }
 })

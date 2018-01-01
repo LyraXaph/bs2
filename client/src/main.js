@@ -4,6 +4,7 @@ import 'vuetify/dist/vuetify.css'
 import App from './App'
 import router from './router'
 import { store } from './store/index'
+import AlertCmp from './components/Shared/Alert.vue'
 
 Vue.use(Vuetify, {
   theme: {
@@ -14,6 +15,8 @@ Vue.use(Vuetify, {
   }
 })
 
+Vue.component('app-alert', AlertCmp)
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -21,5 +24,8 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+  created () {
+    this.$store.dispatch('loadBoulders')
+  }
 })

@@ -4,7 +4,7 @@
             <v-flex xs12>
                 <v-card>
                     <v-card-title class="primary--text">
-                        {{ boulder.title }}
+                        {{ boulder.name }}
                     </v-card-title>
                      <v-card-media
                         :src="boulder.image"
@@ -31,6 +31,7 @@ export default {
   props: ['id'],
   computed: {
     boulder () {
+      console.log(this.$store.getters.loadedBoulder(this.id))
       return this.$store.getters.loadedBoulder(this.id)
     }
   }
