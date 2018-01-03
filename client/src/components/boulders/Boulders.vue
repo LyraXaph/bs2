@@ -7,7 +7,7 @@
             <v-layout row>
               <v-flex xs5 sm3 md3>
                 <v-card-media
-                  :src="boulder.image"
+                  :src="'http://localhost:7777/public/uploads/' + boulder.image"
                   height="130px">
                 </v-card-media>
               </v-flex>

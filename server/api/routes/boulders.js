@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const BoulderController = require('./../controllers/boulderController');
+const checkAuth =require('./../middleware/check-auth');
 
 router.get('/', BoulderController.getBoulders);
 
-router.post('/', BoulderController.upload, BoulderController.resize, BoulderController.createBoulder);
+router.post('/', 
+   // checkAuth,
+    BoulderController.upload, 
+    BoulderController.resize, 
+    BoulderController.createBoulder);
 
 router.get('/:slug', BoulderController.getBoulderBySlug);
 

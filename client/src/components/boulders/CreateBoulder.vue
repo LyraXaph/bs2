@@ -44,13 +44,15 @@
           </v-layout>
           <v-layout>
            <v-flex xs12 sm6 offset-sm3>
-              <v-text-field
-                name="image"
-                label="Image"
-                id="image"
-                v-model="image"
-                required>
-              </v-text-field>
+              <v-btn raised class="primary" @click="onPickFile">
+                Upload image
+              </v-btn>
+           <input 
+              type="file"
+              style="display:none"
+              ref="fileInput"
+              accept="image/*"
+              @change="onFilePicked">
            </v-flex>
           </v-layout>
           <v-layout>
@@ -84,7 +86,8 @@ export default {
       name: '',
       grade: '',
       description: '',
-      image: 'http://boulderrockclub.com/wp-content/uploads/2012/08/laura-910x340.jpg'
+      image: 'http://boulderrockclub.com/wp-content/uploads/2012/08/laura-910x340.jpg',
+      rawImage: ''
     }
   },
   computed: {
@@ -100,14 +103,33 @@ export default {
       if (!this.formIsValid) {
         return
       }
+      if (!this.rawImage) {
+        return
+      }
       const boulderData = {
         name: this.name,
         grade: this.grade,
         description: this.description,
-        image: this.image
+        image: this.rawImage
       }
       this.$store.dispatch('createBoulder', boulderData)
       this.$router.push('/boulders')
+    },
+    onPickFile () {
+      return this.$refs.fileInput.click()
+    },
+    onFilePicked (event) {
+      const files = event.target.files
+      let filename = files[0].name
+      if (filename.lastIndexOf('.') <= 0) {
+        return alert('Please add a valid file!')
+      }
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        this.image = fileReader.result
+      })
+      fileReader.readAsDataURL(files[0])
+      this.rawImage = files[0]
     }
   }
 }

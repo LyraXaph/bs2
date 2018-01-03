@@ -21,11 +21,11 @@ const boulderSchema = new Schema({
         dafault: Date.now
     }, 
     image: String, 
-   /*  author: {
+    creatorId: {
         type: mongoose.Schema.ObjectId,
         ref: 'User', 
         required: 'You must supply an author!'
-    },  */
+    }, 
     gym: {
         type: mongoose.Schema.ObjectId,
         ref: 'gym', 

@@ -16,20 +16,22 @@ const multerOptions = {
     }
 };
 
-exports.upload = multer(multerOptions).single('photo');
+exports.upload = multer(multerOptions).single('image');
 
 exports.resize = async (req, res, next) => {
+    console.log('resizing');
+    console.log(req.file);
     // check if there is no new file to resize
     if (!req.file){
         next(); // skip to the next middleware
         return;
     } 
     const extension = req.file.mimetype.split('/')[1];
-    req.body.photo = `${uuid.v4()}.${extension}`; 
+    req.body.image = `${uuid.v4()}.${extension}`; 
     // now we resize
     const photo = await jimp.read(req.file.buffer);
     await photo.resize(800, jimp.AUTO);
-    await photo.write(`./public/uploads/${req.body.photo}`);
+    await photo.write(`./public/uploads/${req.body.image}`);
     next();
 }
 
@@ -63,7 +65,8 @@ exports.createBoulder = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "Boulder successfully added!",
-            boulderId: boulder._id
+            boulderId: boulder._id, 
+            boulderImage: boulder.image
         });
     }
     catch (err) {

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Api from '@/services/Api'
+const FormData = require('form-data')
 
 Vue.use(Vuex)
 
@@ -8,6 +9,7 @@ export const store = new Vuex.Store({
   state: {
     loadedBoulders: [],
     user: null,
+    token: null,
     loading: false,
     error: null
   },
@@ -23,6 +25,9 @@ export const store = new Vuex.Store({
     },
     setUser (state, payload) {
       state.user = payload
+    },
+    setToken (state, payload) {
+      state.token = payload
     },
     setLoading (state, payload) {
       state.loading = payload
@@ -45,25 +50,40 @@ export const store = new Vuex.Store({
         commit('setLoading', false)
         commit('setError', error.response.data.message)
         console.log(error.response.data.message)
-        commit('setLoading', false)
       }
     },
-    async createBoulder ({commit}, payload) {
+    async createBoulder ({commit, getters}, payload) {
       const boulder = {
-        title: payload.name,
+        name: payload.name,
         grade: payload.grade,
-        image: payload.image,
-        description: payload.description
+        description: payload.description,
+        creatorId: getters.user.id
       }
       try {
-        const data = (await Api().post('boulders/', payload)).data
-        boulder._id = data.boulderId
-        commit('createBoulder', boulder)
-        console.log(data)
+        const form = new FormData()
+        // Second argument  can take Buffer or Stream (lazily read during the request) too.
+        // Third argument is filename if you want to simulate a file upload. Otherwise omit.
+        form.append('image', payload.image)
+        form.append('name', boulder.name)
+        form.append('grade', boulder.grade)
+        form.append('creatorId', boulder.creatorId)
+        form.append('description', boulder.description)
+        const data = (await Api().post('boulders/', form)).data
+        // const data = (await Api().post('boulders/', boulder)).data
+        if (data.success) {
+          boulder._id = data.boulderId
+          boulder.image = data.boulderImage
+          commit('createBoulder', boulder)
+        } else {
+          console.log(boulder)
+          console.log(data)
+          console.log(payload.image)
+        }
       } catch (error) {
+        console.log(error)
         commit('setLoading', false)
         commit('setError', error.response.data.message)
-        console.log(error.response.data.message)
+        
       }
     },
     async deleteBoulder ({commit}, payload) {
@@ -89,6 +109,7 @@ export const store = new Vuex.Store({
           gymId: user.gym
         }
         commit('setUser', newUser)
+        commit('setToken', response.data.token)
       } catch (error) {
         commit('setLoading', false)
         commit('setError', error.response.data.message)
@@ -108,11 +129,16 @@ export const store = new Vuex.Store({
           gymId: user.gym
         }
         commit('setUser', newUser)
+        commit('setToken', response.data.token)
       } catch (error) {
         commit('setLoading', false)
         commit('setError', error.response.data.message)
         // console.log(error.response.data.message)
       }
+    },
+    logout ({commit}) {
+      commit('setUser', null)
+      commit('setToken', null)
     },
     clearError ({commit}) {
       commit('clearError')

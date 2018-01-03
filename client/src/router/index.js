@@ -7,6 +7,7 @@ import CreateBoulder from '@/components/boulders/CreateBoulder'
 import Profile from '@/components/user/Profile'
 import Register from '@/components/user/Register'
 import Signin from '@/components/user/Signin'
+import AuthGuard from './auth-guard'
 
 Vue.use(Router)
 
@@ -25,7 +26,8 @@ export default new Router({
     {
       path: '/boulders/new',
       name: 'CreateBoulder',
-      component: CreateBoulder
+      component: CreateBoulder,
+      beforeEnter: AuthGuard
     },
     {
       path: '/boulder/:id',
