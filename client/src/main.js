@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import { store } from './store/index'
 import AlertCmp from './components/Shared/Alert.vue'
+import EditBoulderDialog from './components/boulders/edit/EditBoulderDialog.vue'
 
 Vue.use(Vuetify, {
   theme: {
@@ -16,6 +17,7 @@ Vue.use(Vuetify, {
 })
 
 Vue.component('app-alert', AlertCmp)
+Vue.component('app-edit-boulder-dialog', EditBoulderDialog)
 
 Vue.config.productionTip = false
 

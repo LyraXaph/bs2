@@ -23,7 +23,7 @@
         <v-carousel style="cursor:pointer">
           <v-carousel-item
             v-for="(boulder, i) in boulders" 
-            v-bind:src="'http://localhost:7777/public/uploads/' + boulder.image"
+            v-bind:src="baseServerImageUrl + boulder.image"
             :key="boulder._id"
             @click="onLoadBoulder(boulder.id)">
             <div class="title">
@@ -49,6 +49,9 @@ export default {
     },
     loading () {
       return this.$store.getters.loading
+    },
+    baseServerImageUrl () {
+      return this.$store.getters.baseServerImageUrl
     }
   },
   methods: {

@@ -7,7 +7,7 @@
             <v-layout row>
               <v-flex xs5 sm3 md3>
                 <v-card-media
-                  :src="'http://localhost:7777/public/uploads/' + boulder.image"
+                  :src="baseServerImageUrl + boulder.image"
                   height="130px">
                 </v-card-media>
               </v-flex>
@@ -39,7 +39,11 @@
 export default {
   computed: {
     boulders () {
+      console.log(this.$store.getters.loadedBoulders)
       return this.$store.getters.loadedBoulders
+    },
+    baseServerImageUrl () {
+      return this.$store.getters.baseServerImageUrl
     }
   },
   methods: {

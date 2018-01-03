@@ -11,7 +11,8 @@ export const store = new Vuex.Store({
     user: null,
     token: null,
     loading: false,
-    error: null
+    error: null,
+    baseServerImageUrl: `http://localhost:7777/public/uploads/`
   },
   mutations: {
     setLoadedBoulders (state, payload) {
@@ -22,6 +23,20 @@ export const store = new Vuex.Store({
     },
     deleteBoulder (state, payload) {
       state.loadedBoulders.splice(state.loadedBoulders.indexOf(payload), 1)
+    },
+    updateBoulder (state, payload) {
+      const boulder = state.loadedBoulders.find(boulder => {
+        return boulder.id === payload.id
+      })
+      if (payload.name) {
+        boulder.name = payload.name
+      }
+      if (payload.description) {
+        boulder.description = payload.description
+      }
+      if (payload.grade) {
+        boulder.grade = payload.grade
+      }
     },
     setUser (state, payload) {
       state.user = payload
@@ -61,8 +76,6 @@ export const store = new Vuex.Store({
       }
       try {
         const form = new FormData()
-        // Second argument  can take Buffer or Stream (lazily read during the request) too.
-        // Third argument is filename if you want to simulate a file upload. Otherwise omit.
         form.append('image', payload.image)
         form.append('name', boulder.name)
         form.append('grade', boulder.grade)
@@ -71,6 +84,7 @@ export const store = new Vuex.Store({
         const data = (await Api().post('boulders/', form)).data
         // const data = (await Api().post('boulders/', boulder)).data
         if (data.success) {
+          console.log(data)
           boulder._id = data.boulderId
           boulder.image = data.boulderImage
           commit('createBoulder', boulder)
@@ -83,13 +97,35 @@ export const store = new Vuex.Store({
         console.log(error)
         commit('setLoading', false)
         commit('setError', error.response.data.message)
-        
       }
     },
     async deleteBoulder ({commit}, payload) {
+      commit('setLoading', true)
       try {
         await Api().delete(`boulders/${payload._id}`)
         commit('deleteBoulder', payload)
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        console.log(error.response.data.message)
+      }
+    },
+    async updateBoulder ({commit}, payload) {
+      commit('setLoading', true)
+      const updateObj = {}
+      if (payload.name) {
+        updateObj.name = payload.name
+      }
+      if (payload.description) {
+        updateObj.description = payload.description
+      }
+      if (payload.grade) {
+        updateObj.grade = payload.grade
+      }
+      try {
+        await Api().patch(`boulders/${payload._id}`, updateObj)
+        commit('updateBoulder', payload)
+        commit('setLoading', false)
       } catch (error) {
         commit('setLoading', false)
         commit('setError', error.response.data.message)
@@ -168,6 +204,9 @@ export const store = new Vuex.Store({
     },
     error (state) {
       return state.error
+    },
+    baseServerImageUrl (state) {
+      return state.baseServerImageUrl
     }
   }
 })

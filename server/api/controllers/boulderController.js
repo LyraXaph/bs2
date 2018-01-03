@@ -19,8 +19,6 @@ const multerOptions = {
 exports.upload = multer(multerOptions).single('image');
 
 exports.resize = async (req, res, next) => {
-    console.log('resizing');
-    console.log(req.file);
     // check if there is no new file to resize
     if (!req.file){
         next(); // skip to the next middleware
@@ -92,6 +90,7 @@ exports.getBoulderBySlug = async (req, res, next) => {
 }
 
 exports.updateBoulder = async (req, res, next) => {
+    console.log(req.params)
     console.log(`updating boulder with id: ${req.params.boulderId}`);
     try {
         const boulder = await Boulder.findOneAndUpdate(
