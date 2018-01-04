@@ -25,6 +25,9 @@
                     View boulder
                   </v-btn>
                   <v-btn flat @click="deleteBoulder(boulder)" >Delete</v-btn>
+                  <v-btn flat @click="climbedIt(boulder)">
+                        Climbed it!
+                    </v-btn>
                 </v-card-actions>
               </v-flex>
             </v-layout>

@@ -15,6 +15,14 @@ export const store = new Vuex.Store({
     baseServerImageUrl: `http://localhost:7777/public/uploads/`
   },
   mutations: {
+    addRemoveBoulderToClimbed (state, payload) {
+      const boulderIndex = state.user.climbedBoulders.findIndex(boulderId => boulderId === payload)
+      if (boulderIndex > 0) {
+        state.user.climbedBoulders.splice(boulderIndex, 1)
+      } else {
+        state.user.climbedBoulders.push(payload)
+      }
+    },
     setLoadedBoulders (state, payload) {
       state.loadedBoulders = payload
     },
@@ -55,6 +63,19 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    async addRemoveBoulderToClimbed ({commit, getters}, payload) {
+      commit('setLoading', true)
+      const user = getters.user
+      try {
+        const data = (await Api().post(`users/${user.id}/climbedBoulders/${payload}`)).data
+        commit('setLoading', false)
+        commit('addRemoveBoulderToClimbed', payload)
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        console.log(error.response.data.message)
+      }
+    },
     async loadBoulders ({commit}) {
       commit('setLoading', true)
       try {
@@ -68,6 +89,7 @@ export const store = new Vuex.Store({
       }
     },
     async createBoulder ({commit, getters}, payload) {
+      commit('setLoading', true)
       const boulder = {
         name: payload.name,
         grade: payload.grade,
@@ -88,6 +110,7 @@ export const store = new Vuex.Store({
           boulder._id = data.boulderId
           boulder.image = data.boulderImage
           commit('createBoulder', boulder)
+          commit('setLoading', false)
         } else {
           console.log(boulder)
           console.log(data)
@@ -104,6 +127,7 @@ export const store = new Vuex.Store({
       try {
         await Api().delete(`boulders/${payload._id}`)
         commit('deleteBoulder', payload)
+        commit('setLoading', false)
       } catch (error) {
         commit('setLoading', false)
         commit('setError', error.response.data.message)
@@ -161,7 +185,7 @@ export const store = new Vuex.Store({
         commit('setLoading', false)
         const newUser = {
           id: user.id,
-          climbedBoulders: [],
+          climbedBoulders: user.climbedBoulders,
           gymId: user.gym
         }
         commit('setUser', newUser)

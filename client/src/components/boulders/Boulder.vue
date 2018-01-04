@@ -30,8 +30,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn class="primary">
-                        Climbed it!
+                    <v-btn class="primary" @click="addRemoveBoulderToClimbed">
+                        {{ userClimbed ? 'Remove from climbed boulders' : 'Add to climbed boulders' }}
                     </v-btn>
                 </v-card-actions>
                 </v-card>
@@ -61,6 +61,20 @@ export default {
         return false
       }
       return this.$store.getters.user.id === this.boulder.creatorId
+    },
+    userClimbed () {
+      // check if boulderId is in the arrray (value is -1 if not)
+      if (!this.userIsAuthenticated) {
+        return false
+      }
+      return this.$store.getters.user.climbedBoulders.findIndex(boulderId => {
+        return boulderId === this.boulder._id
+      }) >= 0
+    }
+  },
+  methods: {
+    addRemoveBoulderToClimbed () {
+      this.$store.dispatch('addRemoveBoulderToClimbed', this.boulder._id)
     }
   }
 }

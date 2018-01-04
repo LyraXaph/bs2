@@ -14,4 +14,6 @@ router.post('/login', UserController.login);
 
 router.delete('/:userId', UserController.deleteUser);
 
+router.post('/:userId/climbedBoulders/:boulderId', UserController.editClimbedBoulders);
+
 module.exports = router;

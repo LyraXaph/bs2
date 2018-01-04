@@ -32,7 +32,10 @@ const userSchema = new Schema({
     resetPasswordExpires: Date, 
     // hearts is an array of ids related to the gym 
     hearts: [
-        { type: mongoose.Schema.ObjectId, ref: 'Gym'}
+        { type: mongoose.Schema.ObjectId, ref: 'Gym' }
+    ],
+    climbedBoulders: [
+        { type: mongoose.Schema.ObjectId, ref: 'Boulder' }
     ]
 }, 
     {

@@ -92,7 +92,8 @@ exports.login = async (req, res, next) => {
                 user: { 
                     email: user.email,
                     id: user._id,
-                    gym: user.gym
+                    gym: user.gym,
+                    climbedBoulders: user.climbedBoulders
                 }
             });
         } else {
@@ -122,9 +123,28 @@ exports.updateAccount = async (req, res) => {
 exports.deleteUser = async(req, res) => {
     try{
        await User.findOneAndRemove({_id: req.params.id});
+       return res.status(200).json( {message : 'User deleted!'});
     } catch(err) {
         console.log(err);
         return res.status(500).send(err);
     }
-    return res.status(200).json( {message : 'User deleted!'});
+}
+   
+/* removes boulder from climbedBoulder if its there, otherwise add it to climbedBoulders */
+exports.editClimbedBoulders = async(req, res) => {
+    console.log(req.params);
+    const user = await User.findOne({_id: req.params.userId});
+    const climbedBoulders = user.climbedBoulders.map(obj => obj.toString())
+    const operator = climbedBoulders.includes(req.params.boulderId) ? '$pull' : '$addToSet'
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.userId, 
+            { [operator]: { climbedBoulders : req.params.boulderId}}, 
+            { new: true }
+        );
+        return res.status(200).json({ message : 'Operation successful'});
+    } catch(err) {
+        console.log(err);
+        return res.status(500).send(err);
+    }
 }
