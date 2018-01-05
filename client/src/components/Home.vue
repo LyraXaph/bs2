@@ -25,7 +25,7 @@
             v-for="(boulder, i) in boulders" 
             v-bind:src="baseServerImageUrl + boulder.image"
             :key="boulder._id"
-            @click="onLoadBoulder(boulder.id)">
+            @click="onLoadBoulder(boulder._id)">
             <div class="title">
               {{ boulder.name }}
             </div>

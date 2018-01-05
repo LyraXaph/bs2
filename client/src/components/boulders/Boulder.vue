@@ -25,10 +25,10 @@
                         height="600px">
                 </v-card-media>
                 <v-card-text>
-                    <div> {{ boulder.grade }} </div>
+                    <div>Grade: {{ boulder.grade }} </div>
                      {{ boulder.description }} 
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions v-if="userIsAuthenticated">
                     <v-spacer></v-spacer>
                     <v-btn class="primary" @click="addRemoveBoulderToClimbed">
                         {{ userClimbed ? 'Remove from climbed boulders' : 'Add to climbed boulders' }}

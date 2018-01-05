@@ -145,6 +145,6 @@ exports.editClimbedBoulders = async(req, res) => {
         return res.status(200).json({ message : 'Operation successful'});
     } catch(err) {
         console.log(err);
-        return res.status(500).send(err);
+        return res.status(500).send({message : err});
     }
 }
