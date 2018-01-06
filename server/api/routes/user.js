@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('./../controllers/userController');
+const checkAuth =require('./../middleware/check-auth');
 
 router.get('/', UserController.getUsers);
 
 router.post('/register', UserController.register);
 
 router.post('/login', UserController.login);
+
+router.get('/autoSignIn', checkAuth, UserController.autoSignIn);
 
 //router.get('/:slug', UserController.getUserBySlug);
 

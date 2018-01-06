@@ -28,6 +28,9 @@ new Vue({
   store,
   render: h => h(App),
   created () {
+    if (this.$store.getters.isLoggedIn) {
+      this.$store.dispatch('autoSignIn')
+    }
     this.$store.dispatch('loadBoulders')
   }
 })

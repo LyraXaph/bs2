@@ -80,7 +80,8 @@
         return menuItems
       },
       userIsAuthenticated () {
-        return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+        // return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+        return this.$store.getters.isLoggedIn
       }
     },
     methods: {

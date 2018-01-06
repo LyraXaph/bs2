@@ -3,7 +3,8 @@ import Api from '@/services/Api'
 export default {
   state: {
     user: null,
-    token: null
+    token: null,
+    isLoggedIn: !!localStorage.getItem('token')
   },
   mutations: {
     addRemoveBoulderToClimbed (state, payload) {
@@ -19,6 +20,10 @@ export default {
     },
     setToken (state, payload) {
       state.token = payload
+      state.isLoggedIn = true
+    },
+    setIsLoggedIn (state, payload) {
+      state.isLoggedIn = payload
     }
   },
   actions: {
@@ -61,28 +66,54 @@ export default {
       try {
         const response = await Api().post('users/login', payload)
         const user = response.data.user
-        commit('setLoading', false)
         const newUser = {
           id: user.id,
           climbedBoulders: user.climbedBoulders,
           gymId: user.gym
         }
+        localStorage.setItem('token', response.data.token)
         commit('setUser', newUser)
         commit('setToken', response.data.token)
+        commit('setLoading', false)
       } catch (error) {
         commit('setLoading', false)
         commit('setError', error.response.data.message)
-        // console.log(error.response.data.message)
+        console.log(error.response.data.message)
+      }
+    },
+    async autoSignIn ({commit}) {
+      commit('setLoading', true)
+      commit('clearError')
+      const token = localStorage.getItem('token')
+      try {
+        const response = await Api().get('users/autoSignIn',
+          {headers:
+            {'Authorization': `bearer ${token}`}
+          })
+        commit('setUser', response.data.user)
+        commit('setToken', token)
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+        console.log(error.response.data.message)
       }
     },
     logout ({commit}) {
+      localStorage.removeItem('token')
       commit('setUser', null)
       commit('setToken', null)
+      commit('setIsLoggedIn', false)
     }
   },
   getters: {
     user (state) {
       return state.user
+    },
+    token (state) {
+      return state.token
+    },
+    isLoggedIn (state) {
+      return state.isLoggedIn
     }
   }
 }

@@ -12,7 +12,6 @@ exports.getUsers = async (req, res) => {
         console.log(error);
         return res.status(500).json({error});
     }
-   
 }
 
 exports.validateRegister = (req, res, next) => {
@@ -80,8 +79,7 @@ exports.login = async (req, res, next) => {
         if(result){
             const token = jwt.sign({
                 email: user.email,
-                id: user._id,
-                gym: user.gym
+                id: user._id
             }, 
             process.env.JWT_SECRET,
             { expiresIn: "1h"}
@@ -104,6 +102,18 @@ exports.login = async (req, res, next) => {
         return res.status(500).json({message: "Auth failed"});
     }
 };
+
+exports.autoSignIn = async (req, res) => {
+    const user = await User.findOne({_id: req.userData.id});
+    return res.status(200).json({
+        user: { 
+            email: user.email,
+            id: user._id,
+            gym: user.gym,
+            climbedBoulders: user.climbedBoulders
+        }
+    });
+}
 
 exports.updateAccount = async (req, res) => {
     const updates = {
