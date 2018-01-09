@@ -99,16 +99,16 @@ function autopopulate(next) {
     next();
 }
 
-gymSchema.pre('find', autopopulate);
-gymSchema.pre('findOne', autopopulate);
+//gymSchema.pre('find', autopopulate);
+//gymSchema.pre('findOne', autopopulate);
 
 // find reviews where the gyms.id property === reviews gym property
-gymSchema.virtual('reviews', {
+/* gymSchema.virtual('reviews', {
     ref: 'Review',
     localField: '_id', // which field on the gym model
     foreignField: 'gym' // which field on the review model 
 });
-
+ */
 module.exports = mongoose.model('Gym', gymSchema);
 
 

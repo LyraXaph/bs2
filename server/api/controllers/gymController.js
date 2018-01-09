@@ -19,21 +19,25 @@ exports.getGyms =  async (req, res) => {
             .limit(5);  
     } else {
     //1. query the database for the list of all stores
-    gyms = await Gym.find();
+        gyms = await Gym.find();
     }
     return res.status(200).json(gyms);
 }
 
-exports.createGym = (req, res, next) => {
+exports.createGym = async (req, res, next) => {
     res.status(200).json({
-        message: 'Handling POST requests to /gyms'
-    });
+        message: `you created a new gym with id ${req.params.gymId}`
+    })
 }
 
 exports.getGym = async (req, res, next) => {
-    res.status(200).json({
-        message: 'Handling POST requests to /gyms'
-    });
+    try {
+        const gym = await Gym.findById(req.params.gymId);
+        res.status(200).json(gym);
+    }  catch(err) {
+        console.log(err);
+        return res.status(500).send({message : err});
+    }
 }
 
 exports.updateGym = (req, res, next) => {

@@ -52,7 +52,7 @@ exports.getBoulders =  async (req, res) => {
             .limit(5);  
     } else {
     //1. query the database for the list of all stores
-    boulders = await Boulder.find();
+        boulders = await Boulder.find();
     }
     res.status(200).json(boulders);
 }
@@ -85,7 +85,7 @@ exports.getBoulderBySlug = async (req, res, next) => {
         return res.status(200).send(boulder);
     } catch (err) {
         console.log(err);
-        return res.status(500).json({error:err});
+        return res.status(500).json({message: err});
     }
 }
 
@@ -100,8 +100,9 @@ exports.updateBoulder = async (req, res, next) => {
             runValidators: true}
         );
         return res.status(200).send(boulder);
-    } catch (error) {
-        res.status(500).send(error);
+    }  catch(err) {
+        console.log(err);
+        return res.status(500).send({message : err});
     }
 }
 
@@ -111,8 +112,8 @@ exports.deleteBoulder = async (req, res, next) => {
         return res.status(200).json({
             message: `you deleted boulder with id ${req.params.boulderId}`
         })
-     } catch(err) {
-         console.log(err);
-         return res.send(err);
-     }
+     }  catch(err) {
+        console.log(err);
+        return res.status(500).send({message : err});
+    }
 }

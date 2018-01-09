@@ -50,7 +50,7 @@ export default {
         const newUser = {
           id: user.id,
           climbedBoulders: [],
-          gymId: user.gym
+          gym: user.gym
         }
         commit('setUser', newUser)
         commit('setToken', response.data.token)
@@ -69,7 +69,7 @@ export default {
         const newUser = {
           id: user.id,
           climbedBoulders: user.climbedBoulders,
-          gymId: user.gym
+          gym: user.gym
         }
         localStorage.setItem('token', response.data.token)
         commit('setUser', newUser)
@@ -81,17 +81,28 @@ export default {
         console.log(error.response.data.message)
       }
     },
-    async autoSignIn ({commit}) {
+    async autoSignIn ({commit}, payload) {
       commit('setLoading', true)
       commit('clearError')
       const token = localStorage.getItem('token')
       try {
-        const response = await Api().get('users/autoSignIn',
-          {headers:
-            {'Authorization': `bearer ${token}`}
-          })
+        const response = await Api().get('users/autoSignIn', { headers: { 'Authorization': `bearer ${token}` } })
         commit('setUser', response.data.user)
         commit('setToken', token)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+        commit('setLoading', false)
+        commit('setError', error.response.data.message)
+      }
+    },
+    async updateUser ({commit}, payload) {
+      commit('setLoading', true)
+      commit('clearError')
+      try {
+        const response = await Api().patch(`users/${payload.userId}`, payload.fieldsToEdit)
+        commit('setUser', response.data.user)
+        commit('setLoading', false)
       } catch (error) {
         commit('setLoading', false)
         commit('setError', error.response.data.message)

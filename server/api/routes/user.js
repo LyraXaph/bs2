@@ -11,9 +11,9 @@ router.post('/login', UserController.login);
 
 router.get('/autoSignIn', checkAuth, UserController.autoSignIn);
 
-//router.get('/:slug', UserController.getUserBySlug);
+router.get('/:userId', UserController.getUserById);
 
-//router.patch('/:userId', UserController.updateUser);
+router.patch('/:userId', UserController.updateUser);
 
 router.delete('/:userId', UserController.deleteUser);
 

@@ -15,9 +15,6 @@ exports.getUsers = async (req, res) => {
 }
 
 exports.validateRegister = (req, res, next) => {
-    //req.sanitizeBody('name');
-
-    //req.checkBody('name', 'You must supply a name!').notEmpty();
     req.checkBody('email', 'That Email is not valid').isEmail();
     req.sanitizeBody('email').normalizeEmail({
         remove_dots: false,
@@ -69,7 +66,7 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
     try {
-        let user = await User.findOne({email: req.body.email});
+        let user = await User.findOne({email: req.body.email}).populate('gym', 'name');
         if (!user){
             return res.status(401).json({
                 message: "Auth failed"
@@ -81,14 +78,16 @@ exports.login = async (req, res, next) => {
                 email: user.email,
                 id: user._id
             }, 
-            process.env.JWT_SECRET,
-            { expiresIn: "1h"}
+            process.env.JWT_SECRET
+            // { expiresIn: "1h"}
             );
             return res.status(200).json({
                 message: "Auth successful", 
                 token: token,
                 user: { 
                     email: user.email,
+                    name: user.name,
+                    lastname: user.lastname,
                     id: user._id,
                     gym: user.gym,
                     climbedBoulders: user.climbedBoulders
@@ -104,30 +103,62 @@ exports.login = async (req, res, next) => {
 };
 
 exports.autoSignIn = async (req, res) => {
-    const user = await User.findOne({_id: req.userData.id});
-    return res.status(200).json({
-        user: { 
-            email: user.email,
-            id: user._id,
-            gym: user.gym,
-            climbedBoulders: user.climbedBoulders
-        }
-    });
+    try {
+        const user = await User.findById(req.userData.id).populate('gym', 'name');
+        return res.status(200).json({
+            user: { 
+                email: user.email,
+                name: user.name,
+                lastname: user.lastname,
+                id: user._id,
+                gym: user.gym,
+                climbedBoulders: user.climbedBoulders
+            }
+        });
+    } catch(err){
+        console.log(err);
+        return res.status(500).json({message: "Auth failed"});
+    }
 }
 
-exports.updateAccount = async (req, res) => {
-    const updates = {
-        name: req.body.name,
-        email: req.body.email
-    };
+exports.getUserById = async (req, res) => {
+    try { 
+        const user = await User.findById(req.params.userId);
+        return res.status(200).json({
+            user: { 
+                email: user.email,
+                name: user.name, 
+                lastname: user.lastname,
+                gym: user.gym,
+                climbedBoulders: user.climbedBoulders
+            }
+        });
+    }  catch(err) {
+        console.log(err);
+        return res.status(500).send({message : err});
+    }
+}
 
-    const user = await User.findOneAndUpdate(
-        { _id: req.user._id },
-        { $set: updates },
-        { new: true, runValidators: true, context: 'query' }
-    );
-    req.flash('success', 'Updated the profile');
-    res.redirect('back'); //back to the one they came from 
+exports.updateUser = async (req, res, next) => {
+    const updateOps = {};
+    for (const ops of req.body) {
+      updateOps[ops.propName] = ops.value;
+    }
+    try {
+        const user = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $set: updateOps },
+            { new: true, runValidators: true, context: 'query' }
+        ).populate('gym', 'name');
+        return res.status(200).json({
+             message : 'User successfully updated!',
+             user: user
+            });
+    } catch(err) {
+        console.log(err);
+        return res.status(500).send({message : err});
+    }
+   
 }
 
 exports.deleteUser = async(req, res) => {
@@ -142,7 +173,6 @@ exports.deleteUser = async(req, res) => {
    
 /* removes boulder from climbedBoulder if its there, otherwise add it to climbedBoulders */
 exports.editClimbedBoulders = async(req, res) => {
-    console.log(req.params);
     const user = await User.findOne({_id: req.params.userId});
     const climbedBoulders = user.climbedBoulders.map(obj => obj.toString())
     const operator = climbedBoulders.includes(req.params.boulderId) ? '$pull' : '$addToSet'
