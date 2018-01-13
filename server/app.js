@@ -8,7 +8,8 @@ const cors = require('cors');
 const boulderRoutes = require('./api/routes/boulders');
 const gymRoutes = require('./api/routes/gyms');
 const userRoutes = require('./api/routes/user');
-
+const reviewRoutes = require('./api/routes/reviews');
+const commentRoutes = require('./api/routes/comments');
 
 // import environmental variables from our variables.env file
 require('dotenv').config({ path: 'variables.env' });
@@ -30,6 +31,9 @@ app.use(bodyParser.json());
 app.use('/boulders', boulderRoutes);
 app.use('/gyms', gymRoutes);
 app.use('/users', userRoutes);
+app.use('/reviews', reviewRoutes);
+app.use('/comments', commentRoutes);
+
 app.use((req, res, next) => {
     const error = new Error('Not found');
     error.status = 404;

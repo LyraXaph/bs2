@@ -31,9 +31,13 @@ const boulderSchema = new Schema({
         ref: 'Gym', 
         dafault: '58c05fd08060197ca0b52d5a'
         //required: 'You must supply a gym!'
-    } 
-    
-});
+    }
+}, 
+    {
+        toJSON: {virtuals: true}, 
+        toObject: {vurtuals: true}
+    }
+);
 
 //define indexes (index something as text)
 boulderSchema.index({
@@ -41,7 +45,6 @@ boulderSchema.index({
     description: 'text',
     grade: 'text'
 });
-
 
 boulderSchema.pre('save', async function(next){
     if(!this.isModified('name')){
@@ -58,10 +61,27 @@ boulderSchema.pre('save', async function(next){
 });
 
  // find reviews where the boulder.id property === reviews boulder property
- boulderSchema.virtual('reviews', {
+boulderSchema.virtual('reviews', {
     ref: 'Review', 
     localField: '_id', // which field on the boulder model
     foreignField: 'boulder' // which field on the review model 
 });
+
+boulderSchema.virtual(
+    'comments', {
+        ref: 'Comment', 
+        localField: '_id', 
+        foreignField: 'boulder' 
+    }
+); 
+
+function autopopulate(next){
+    this.populate({ path: 'comments', select: '-hash -salt -_id' });
+    next();
+}
+
+boulderSchema.pre('find', autopopulate);
+boulderSchema.pre('findOne', autopopulate); 
+
 
 module.exports = mongoose.model('Boulder', boulderSchema);

@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-layout row wrap v-if="loading">
-            <v-flex xs12 class="text-xs-center">
+            <v-flex xs12 sm6 class="text-xs-center">
                 <v-progress-circular
                 indeterminate color="purple"
                 :width="7"
@@ -11,10 +11,10 @@
             </v-flex>
         </v-layout>
         <v-layout row wrap v-else>
-            <v-flex xs12>
+            <v-flex xs12 sm6 class="pr-3">
                 <v-card>
                     <v-card-title class="primary--text">
-                        {{ boulder.name }}
+                        <h2>{{ boulder.name }}</h2>
                         <template v-if="userIsCreateor">
                             <v-spacer></v-spacer>
                             <app-edit-boulder-dialog :boulder="boulder"></app-edit-boulder-dialog>
@@ -25,8 +25,9 @@
                         height="600px">
                 </v-card-media>
                 <v-card-text>
-                    <div>Grade: {{ boulder.grade }} </div>
-                     {{ boulder.description }} 
+                    <div>Grade by author: {{ boulder.grade }} </div>
+                    <div>Avg grade: {{ boulder.grade }} </div>
+                    <strong>Description:</strong> {{ boulder.description }} 
                 </v-card-text>
                 <v-card-actions v-if="userIsAuthenticated">
                     <v-spacer></v-spacer>
@@ -36,12 +37,46 @@
                 </v-card-actions>
                 </v-card>
             </v-flex>
+              <v-flex xs12 sm6 class="pr-3">
+                <v-card>
+                    <v-card-title class="primary--text">
+                        <h2>Comments</h2>
+                    </v-card-title>
+                <v-card-text>
+                  <div v-for="(comment, index) in boulder.comments" class="pt-3"> 
+                    <strong>{{ comment.author.name }}: </strong>
+                    {{ comment.text }} 
+                  </div>  
+                   <v-flex xs12>
+                    <v-text-field
+                      name="newComment"
+                      label="Comment"
+                      id="newComment"
+                      v-model="description"
+                      multi-line>
+                    </v-text-field>
+                  </v-flex>
+                </v-card-text>
+                <v-card-actions v-if="userIsAuthenticated">
+                    <v-spacer></v-spacer>
+                    <v-btn class="primary" @click="addRemoveBoulderToClimbed">
+                       Leave Comment
+                    </v-btn>
+                </v-card-actions>
+                </v-card>
+            </v-flex>
+           
         </v-layout>
     </v-container>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      description: ''
+    }
+  },
   props: ['id'],
   computed: {
     boulder () {

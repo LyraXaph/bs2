@@ -33,6 +33,16 @@ exports.resize = async (req, res, next) => {
     next();
 }
 
+exports.getBoulder =  async (req, res) => {
+    try {
+    const boulder = await Boulder.findById(req.params.boulderId).populate('reviews comments');
+    res.status(200).json(boulder);
+    } catch (err) {
+        console.log(err);
+        res.json({success: false, message: err});
+    }
+}
+
 exports.getBoulders =  async (req, res) => {
     let boulders = null
     if (req.query.search) {
@@ -51,8 +61,13 @@ exports.getBoulders =  async (req, res) => {
             // limit to only 5 results
             .limit(5);  
     } else {
-    //1. query the database for the list of all stores
+    try {
         boulders = await Boulder.find();
+    }catch (err) {
+        console.log(err);
+        res.json({success: false, message: err});
+    }
+
     }
     res.status(200).json(boulders);
 }
@@ -71,12 +86,6 @@ exports.createBoulder = async (req, res, next) => {
         console.log(err);
         res.json({success: false, message: err});
     }
-}
-
-exports.getBoulder = (req, res, next) => {
-    res.status(200).json({
-        message: `you discovered boulder with id ${req.params.boulderId}`
-    });
 }
 
 exports.getBoulderBySlug = async (req, res, next) => {

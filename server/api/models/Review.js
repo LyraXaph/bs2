@@ -3,10 +3,6 @@ const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
 const reviewSchema = new Schema({
-    text: {
-        type: String, 
-        required: 'Your reveiw must have text!'
-    }, 
     rating: {
         type: Number, 
         min: 1, 
@@ -21,10 +17,10 @@ const reviewSchema = new Schema({
         ref: 'User', 
         required: 'You must supply an author!'
     }, 
+    // reviews are referencing either a gym or a boulder
     gym: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Gym', 
-        required: 'You must supply a gym!'
+        ref: 'Gym'
     },
     boulder: {
         type: mongoose.Schema.ObjectId,
@@ -32,12 +28,12 @@ const reviewSchema = new Schema({
     }
 });
 
-function autopopulate(next){
+/* function autopopulate(next){
     this.populate('author');
     next();
-}
+} */
 
-reviewSchema.pre('find', autopopulate);
-reviewSchema.pre('findOne', autopopulate);
+/* reviewSchema.pre('find', autopopulate);
+reviewSchema.pre('findOne', autopopulate); */
 
 module.exports = mongoose.model('Review', reviewSchema);

@@ -5,6 +5,11 @@ const validator = require('validator');
 const md5 = require('md5');
 
 const userSchema = new Schema({
+    name: {
+        type: String, 
+        //required: 'Please supply a name', 
+        trim: true,
+    }, 
     email: {
         type: String, 
         unique: true, 
@@ -12,11 +17,6 @@ const userSchema = new Schema({
         trim: true,
         validate: [validator.isEmail, 'Invalid Email Address'],  
         required: 'Please Supply an email address'
-    }, 
-    name: {
-        type: String, 
-        //required: 'Please supply a name', 
-        trim: true
     }, 
     lastname: {
         type: String, 

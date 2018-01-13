@@ -5,6 +5,8 @@ const checkAuth =require('./../middleware/check-auth');
 
 router.get('/', BoulderController.getBoulders);
 
+router.get('/:boulderId', BoulderController.getBoulder);
+
 router.post('/', 
    // checkAuth,
     BoulderController.upload, 
