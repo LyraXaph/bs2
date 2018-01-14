@@ -76,7 +76,7 @@ boulderSchema.virtual(
 ); 
 
 function autopopulate(next){
-    this.populate({ path: 'comments', select: '-hash -salt -_id' });
+    this.populate({ path: 'comments', select: '-hash -salt' });
     next();
 }
 

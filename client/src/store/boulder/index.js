@@ -29,6 +29,19 @@ export default {
       if (payload.grade) {
         boulder.grade = payload.grade
       }
+    },
+    addComment (state, payload) {
+      const boulder = state.loadedBoulders.find(boulder => boulder._id === payload.boulder)
+      if (boulder) {
+        boulder.comments.push(payload)
+      }
+    },
+    removeComment (state, payload) {
+      const boulder = state.loadedBoulders.find(boulder => boulder._id === payload.boulderId)
+      if (boulder) {
+        const commentIndex = boulder.comments.findIndex(comment => comment._id === payload.commentId)
+        boulder.comments.splice(commentIndex, 1)
+      }
     }
   },
   actions: {
@@ -107,6 +120,35 @@ export default {
         commit('setLoading', false)
         commit('setError', error.response.data.message)
         console.log(error.response.data.message)
+      }
+    },
+    async addComment ({commit, getters}, payload) {
+      const user = getters.user
+      try {
+        const comment = (await Api().post(`comments`, {
+          boulder: payload.boulderId,
+          text: payload.text,
+          author: user.id
+        })).data.comment
+        comment.author = user
+        commit('addComment', comment)
+      } catch (error) {
+        commit('setError', error.response.data.message)
+        // console.log(error.response.data.message)
+        console.log(error)
+      }
+    },
+    async removeComment ({commit}, payload) {
+      try {
+        await Api().delete(`comments/${payload.commentId}`)
+        commit('removeComment', {
+          commentId: payload.commentId,
+          boulderId: payload.boulderId
+        })
+      } catch (error) {
+        commit('setError', error.response.data.message)
+        console.log(error.response.data.message)
+        // console.log(error)
       }
     }
   },

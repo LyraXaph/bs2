@@ -42,30 +42,43 @@
                     <v-card-title class="primary--text">
                         <h2>Comments</h2>
                     </v-card-title>
+              <form  @submit.prevent="addComment">
                 <v-card-text>
-                  <div v-for="(comment, index) in boulder.comments" class="pt-3"> 
-                    <strong>{{ comment.author.name }}: </strong>
-                    {{ comment.text }} 
-                  </div>  
+                  <v-list three-line>
+                    <template v-for="(comment, index) in boulder.comments"> 
+                      <v-list-tile-content>
+                        <v-list-tile-title v-html="comment.author.name"></v-list-tile-title>
+                        <v-list-tile-sub-title v-html="comment.text"></v-list-tile-sub-title> 
+                        <v-btn fab small absolute right @click="removeComment(comment._id)">
+                          <v-icon>delete</v-icon>
+                        </v-btn>
+                      </v-list-tile-content>
+                      <v-divider></v-divider>
+                    </template>  
+                  </v-list>
                    <v-flex xs12>
-                    <v-text-field
-                      name="newComment"
-                      label="Comment"
-                      id="newComment"
-                      v-model="description"
-                      multi-line>
-                    </v-text-field>
-                  </v-flex>
-                </v-card-text>
-                <v-card-actions v-if="userIsAuthenticated">
-                    <v-spacer></v-spacer>
-                    <v-btn class="primary" @click="addRemoveBoulderToClimbed">
-                       Leave Comment
-                    </v-btn>
-                </v-card-actions>
+                      <v-text-field
+                        name="newComment"
+                        label="Comment"
+                        id="newComment"
+                        v-model="text"
+                        required
+                        multi-line>
+                      </v-text-field>
+                    </v-flex>
+                  </v-card-text>
+                  <v-card-actions v-if="userIsAuthenticated">
+                      <v-spacer></v-spacer>
+                      <v-btn 
+                        class="primary"
+                        type="submit"
+                        :disabled="!formIsValid">
+                        Leave Comment
+                      </v-btn>
+                  </v-card-actions>
+                   </form>
                 </v-card>
             </v-flex>
-           
         </v-layout>
     </v-container>
 </template>
@@ -74,7 +87,7 @@
 export default {
   data () {
     return {
-      description: ''
+      text: ''
     }
   },
   props: ['id'],
@@ -105,11 +118,21 @@ export default {
       return this.$store.getters.user.climbedBoulders.findIndex(boulderId => {
         return boulderId === this.boulder._id
       }) >= 0
+    },
+    formIsValid () {
+      return this.text !== ''
     }
   },
   methods: {
     addRemoveBoulderToClimbed () {
       this.$store.dispatch('addRemoveBoulderToClimbed', this.boulder._id)
+    },
+    addComment () {
+      this.$store.dispatch('addComment', {boulderId: this.id, text: this.text})
+      this.text = ''
+    },
+    removeComment (commentId) {
+      this.$store.dispatch('removeComment', {commentId, boulderId: this.boulder._id})
     }
   }
 }

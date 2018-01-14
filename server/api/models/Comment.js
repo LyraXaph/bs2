@@ -23,7 +23,7 @@ const commentSchema = new Schema({
 });
 
 function autopopulate(next){
-    this.populate({ path: 'author', select: '-hash -salt -_id' });
+    this.populate({ path: 'author', select: '-hash -salt' });
     next();
 }
 
