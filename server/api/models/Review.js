@@ -6,7 +6,8 @@ const reviewSchema = new Schema({
     rating: {
         type: Number, 
         min: 1, 
-        max: 5
+        max: 5,
+        required: 'You must supply the rating!'
     },
     created: {
         type: Date, 
@@ -27,6 +28,8 @@ const reviewSchema = new Schema({
         ref: 'Boulder'
     }
 });
+
+reviewSchema.index({ "author": 1, "boulder": 1}, { "unique": true });
 
 /* function autopopulate(next){
     this.populate('author');

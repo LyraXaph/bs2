@@ -73,6 +73,7 @@
         ]
         if (this.userIsAuthenticated) {
           menuItems = [
+            { icon: 'trending_up', title: 'View Boulders', link: '/boulders' },
             { icon: 'room', title: 'View Gyms', link: '/gyms' },
             { icon: 'person', title: 'Profile', link: '/profile' }
           ]

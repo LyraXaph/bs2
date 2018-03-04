@@ -34,9 +34,12 @@ exports.resize = async (req, res, next) => {
 }
 
 exports.getBoulder =  async (req, res) => {
+    let boulder = {};
     try {
-    const boulder = await Boulder.findById(req.params.boulderId).populate('reviews comments');
-    res.status(200).json(boulder);
+        boulder = await Boulder.findById(req.params.boulderId)
+                        .populate('reviews comments').lean().exec(); // lean().exec() produces native js objects instead of models
+        boulder.avgRating = (await Boulder.getAvgRating(req.params.boulderId))[0].averageRating;
+        res.status(200).json(boulder);
     } catch (err) {
         console.log(err);
         res.json({success: false, message: err});
@@ -44,7 +47,7 @@ exports.getBoulder =  async (req, res) => {
 }
 
 exports.getBoulders =  async (req, res) => {
-    let boulders = null
+    let boulders = {};
     if (req.query.search) {
         let regex = new RegExp('.*' + req.query.search + '.*', 'gi');        
         boulders = await Boulder.
@@ -61,15 +64,22 @@ exports.getBoulders =  async (req, res) => {
             // limit to only 5 results
             .limit(5);  
     } else {
-    try {
-        boulders = await Boulder.find();
-    }catch (err) {
-        console.log(err);
-        res.json({success: false, message: err});
+        try {
+            boulders = await Boulder.find().lean().exec();
+            Promise.all(
+                boulders.map(async (boulder) => { 
+                    boulder.avgRating = (await Boulder.getAvgRating(boulder._id))[0].averageRating;
+                    return boulder;
+                }))
+                .then((boulders) => { 
+                    res.status(200).json(boulders);
+                });
+        } catch (err) {
+            console.log(err);
+            res.json({success: false, message: err});
+        }
     }
-
-    }
-    res.status(200).json(boulders);
+    
 }
 
 exports.createBoulder = async (req, res, next) => {
@@ -122,6 +132,26 @@ exports.deleteBoulder = async (req, res, next) => {
             message: `you deleted boulder with id ${req.params.boulderId}`
         })
      }  catch(err) {
+        console.log(err);
+        return res.status(500).send({message : err});
+    }
+}
+
+exports.getBoulderAvgRating = async (req, res, next) => {
+    try {
+        const avgRating = await Boulder.aggregate(
+            { $lookup: { from: 'reviews', localField: '_id', foreignField: 'boulder', as: 'reviews' } },
+            { $match: { _id: mongoose.Types.ObjectId(req.params.boulderId) } },
+            {
+                $project: {
+                    averageRating: { $avg: '$reviews.rating' }
+                }
+            }
+        ); 
+        return res.status(200).json({
+            avgRating : avgRating[0].averageRating
+        })
+    }  catch(err) {
         console.log(err);
         return res.status(500).send({message : err});
     }

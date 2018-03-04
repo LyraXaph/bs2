@@ -9,7 +9,7 @@ export default {
   mutations: {
     addRemoveBoulderToClimbed (state, payload) {
       const boulderIndex = state.user.climbedBoulders.findIndex(boulderId => boulderId === payload)
-      if (boulderIndex > 0) {
+      if (boulderIndex >= 0) {
         state.user.climbedBoulders.splice(boulderIndex, 1)
       } else {
         state.user.climbedBoulders.push(payload)

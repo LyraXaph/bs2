@@ -15,8 +15,14 @@
                 <v-card>
                     <v-card-title class="primary--text">
                         <h2>{{ boulder.name }}</h2>
+                        <v-spacer></v-spacer>
+                        <v-btn fab @click="addRemoveBoulderToClimbed">
+                          <v-tooltip top>
+                            <v-icon slot="activator"> {{ !userClimbed ? 'trending_up' : 'trending_down' }}</v-icon>
+                            <span> {{ !userClimbed ? 'Add to climbed boulders' : 'Remove from climbed boulders' }}</span>
+                          </v-tooltip>
+                        </v-btn>
                         <template v-if="userIsCreateor">
-                            <v-spacer></v-spacer>
                             <app-edit-boulder-dialog :boulder="boulder"></app-edit-boulder-dialog>
                         </template>
                     </v-card-title>
@@ -25,16 +31,43 @@
                         height="600px">
                 </v-card-media>
                 <v-card-text>
-                    <div>Grade by author: {{ boulder.grade }} </div>
-                    <div>Avg grade: {{ boulder.grade }} </div>
-                    <strong>Description:</strong> {{ boulder.description }} 
+                    <v-layout row>
+                      <v-flex xs8>
+                        <strong> Author's comment:</strong> {{ boulder.description }}</br> 
+                        <span class="text-xs-left">Grade by author: {{ boulder.grade }} </span></br>
+                        <span class="text-xs-right">Avg grade: {{ boulder.grade }}</span></br>
+                        <span class="text-xs-right">Avg rating: {{ boulder.avgRating }}</span></br>
+                      </v-flex>
+                      <v-flex xs4>
+                        <v-layout justify-end>
+                          <v-card-actions v-if="userIsAuthenticated">
+                            <form class="reviewer" @submit.prevent="rateBoulder">
+                              <div class="reviewer__meta">
+                                  <div class="reviewer__stars" >
+                                    <template v-for="i in numbers">
+                                      <input 
+                                        type="radio"
+                                        required 
+                                        name="rating"
+                                        v-model="rating"
+                                        :value="i"
+                                        :key="i"
+                                        :id="'star' + i">
+                                      <label :for="'star' + i"></label>
+                                    </template>
+                                  </div>
+                                </div>
+                                <v-btn 
+                                  class="primary"
+                                  type="submit">
+                                  Rate boulder
+                                </v-btn>
+                            </form>
+                          </v-card-actions>
+                        </v-layout>
+                      </v-flex>
+                    </v-layout>
                 </v-card-text>
-                <v-card-actions v-if="userIsAuthenticated">
-                    <v-spacer></v-spacer>
-                    <v-btn class="primary" @click="addRemoveBoulderToClimbed">
-                        {{ userClimbed ? 'Remove from climbed boulders' : 'Add to climbed boulders' }}
-                    </v-btn>
-                </v-card-actions>
                 </v-card>
             </v-flex>
               <v-flex xs12 sm6 class="pr-3">
@@ -46,14 +79,17 @@
                 <v-card-text>
                   <v-list three-line>
                     <template v-for="(comment, index) in boulder.comments"> 
-                      <v-list-tile-content>
-                        <v-list-tile-title v-html="comment.author.name"></v-list-tile-title>
-                        <v-list-tile-sub-title v-html="comment.text"></v-list-tile-sub-title> 
-                        <v-btn fab small absolute right @click="removeComment(comment._id)">
-                          <v-icon>delete</v-icon>
-                        </v-btn>
-                      </v-list-tile-content>
-                      <v-divider></v-divider>
+                      <v-list-tile v-bind:key="comment._id" >
+                        <v-list-tile-avatar>
+                          <v-btn fab small absolute left @click="removeComment(comment._id)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content >
+                          <v-list-tile-title v-html="comment.author.name"></v-list-tile-title>
+                          <v-list-tile-sub-title v-html="comment.text"></v-list-tile-sub-title> 
+                        </v-list-tile-content>
+                      </v-list-tile>
                     </template>  
                   </v-list>
                    <v-flex xs12>
@@ -67,15 +103,12 @@
                       </v-text-field>
                     </v-flex>
                   </v-card-text>
-                  <v-card-actions v-if="userIsAuthenticated">
-                      <v-spacer></v-spacer>
-                      <v-btn 
+                    <v-btn 
                         class="primary"
                         type="submit"
                         :disabled="!formIsValid">
                         Leave Comment
                       </v-btn>
-                  </v-card-actions>
                    </form>
                 </v-card>
             </v-flex>
@@ -84,14 +117,21 @@
 </template>
 
 <script>
+// import Api from '@/services/Api'
 export default {
   data () {
     return {
-      text: ''
+      text: '',
+      rating: '',
+      avgRating: '',
+      numbers: [5, 4, 3, 2, 1]
     }
   },
   props: ['id'],
   computed: {
+    starId (i) {
+      return `stars${i}`
+    },
     boulder () {
       return this.$store.getters.loadedBoulder(this.id)
     },
@@ -133,11 +173,15 @@ export default {
     },
     removeComment (commentId) {
       this.$store.dispatch('removeComment', {commentId, boulderId: this.boulder._id})
+    },
+    rateBoulder () {
+      this.$store.dispatch('rateBoulder', {boulderId: this.boulder._id, rating: this.rating})
+      // this.getAvgRating()
     }
   }
 }
 </script>
 
 <style>
-
+  
 </style>

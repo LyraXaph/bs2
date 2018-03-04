@@ -75,8 +75,22 @@ boulderSchema.virtual(
     }
 ); 
 
+boulderSchema.statics.getAvgRating = function (id) {
+    return this.aggregate ([
+        { $lookup: { from: 'reviews', localField: '_id', foreignField: 'boulder', as: 'reviews' } },
+        { $match: { _id: mongoose.Types.ObjectId(id) } },
+        {
+            $project: {
+                averageRating: { $avg: '$reviews.rating' }
+            }
+        }
+    ])
+}
+
 function autopopulate(next){
-    this.populate({ path: 'comments', select: '-hash -salt' });
+    this.populate( 
+        { path: 'comments', select: '-hash -salt' }
+    );
     next();
 }
 

@@ -19,4 +19,6 @@ router.patch('/:boulderId', BoulderController.updateBoulder);
 
 router.delete('/:boulderId', BoulderController.deleteBoulder);
 
+router.get('/getAvgRating/:boulderId', BoulderController.getBoulderAvgRating)
+
 module.exports = router;

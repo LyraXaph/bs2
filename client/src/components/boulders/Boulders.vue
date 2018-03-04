@@ -16,6 +16,7 @@
                   <div>
                     <h3 class="headline mb-0">{{ boulder.name }}</h3>
                     <div>{{ boulder.description }}</div>
+                    <div> Avg rating: {{ boulder.avgRating }}</div>
                   </div>
                 </v-card-title>
                  <v-card-actions>

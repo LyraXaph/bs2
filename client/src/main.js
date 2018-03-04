@@ -6,6 +6,7 @@ import router from './router'
 import { store } from './store/index'
 import AlertCmp from './components/Shared/Alert.vue'
 import EditBoulderDialog from './components/boulders/edit/EditBoulderDialog.vue'
+import './css/main.scss'
 
 Vue.use(Vuetify, {
   theme: {
