@@ -65,7 +65,7 @@ exports.getBoulders =  async (req, res) => {
             .limit(5);  
     } else {
         try {
-            boulders = await Boulder.find().lean().exec();
+            boulders = await Boulder.find().populate('reviews comments').lean().exec();
             Promise.all(
                 boulders.map(async (boulder) => { 
                     boulder.avgRating = (await Boulder.getAvgRating(boulder._id))[0].averageRating;

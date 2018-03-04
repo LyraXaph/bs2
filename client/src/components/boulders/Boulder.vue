@@ -51,6 +51,7 @@
                                         name="rating"
                                         v-model="rating"
                                         :value="i"
+                                        :ref="'star' + i"
                                         :key="i"
                                         :id="'star' + i">
                                       <label :for="'star' + i"></label>
@@ -176,7 +177,16 @@ export default {
     },
     rateBoulder () {
       this.$store.dispatch('rateBoulder', {boulderId: this.boulder._id, rating: this.rating})
-      // this.getAvgRating()
+    }
+  },
+  mounted () {
+    if (this.userIsAuthenticated) {
+      let userRating = null
+      const userReview = this.boulder.reviews.find(review => review.author === this.$store.getters.user.id)
+      if (userReview) { userRating = userReview.rating }
+      for (let i = 1; i <= userRating; i++) {
+        this.$refs[`star${i}`][0].checked = true
+      }
     }
   }
 }
