@@ -6,7 +6,7 @@ const slug = require('slugs');
 const boulderSchema = new Schema({
     name: {
         type: String, 
-        required: "Please enter a boulder name."
+        // required: "Please enter a boulder name."
     },
     slug: String,
     description: {
@@ -14,7 +14,7 @@ const boulderSchema = new Schema({
     }, 
     grade: {
         type: String, // ??
-        required: "Please enter a grade."
+        // required: "Please enter a grade."
     },
     created: {
         type: Date, 
@@ -29,8 +29,8 @@ const boulderSchema = new Schema({
     gym: {
         type: mongoose.Schema.ObjectId,
         ref: 'Gym', 
-        dafault: '58c05fd08060197ca0b52d5a'
-        //required: 'You must supply a gym!'
+        dafault: '58c05fd08060197ca0b52d5a',
+        required: 'You must supply a gym!'
     }
 }, 
     {
@@ -89,7 +89,8 @@ boulderSchema.statics.getAvgRating = function (id) {
 
 function autopopulate(next){
     this.populate( 
-        { path: 'comments', select: '-hash -salt' }
+        { path: 'gym', select: 'name' }, 
+
     );
     next();
 }

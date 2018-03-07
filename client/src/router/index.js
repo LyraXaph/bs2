@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/Home'
+// import Home from '@/components/Home'
 import Boulders from '@/components/boulders/Boulders'
 import Boulder from '@/components/boulders/Boulder'
 import CreateBoulder from '@/components/boulders/CreateBoulder'
@@ -16,7 +16,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: Home
+      component: Boulders
     },
     {
       path: '/boulders',

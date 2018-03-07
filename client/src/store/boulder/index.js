@@ -69,7 +69,8 @@ export default {
         name: payload.name,
         grade: payload.grade,
         description: payload.description,
-        creatorId: getters.user.id
+        creatorId: getters.user.id,
+        gym: payload.gym
       }
       try {
         const form = new FormData()
@@ -77,6 +78,7 @@ export default {
         form.append('name', boulder.name)
         form.append('grade', boulder.grade)
         form.append('creatorId', boulder.creatorId)
+        form.append('gym', boulder.gym.id)
         form.append('description', boulder.description)
         const data = (await Api().post('boulders/', form)).data
         if (data.success) {

@@ -37,6 +37,7 @@
                         <span class="text-xs-left">Grade by author: {{ boulder.grade }} </span></br>
                         <span class="text-xs-right">Avg grade: {{ boulder.grade }}</span></br>
                         <span class="text-xs-right">Avg rating: {{ boulder.avgRating }}</span></br>
+                        <span class="text-xs-right">Gym: {{ boulder.gym.name }}</span>
                       </v-flex>
                       <v-flex xs4>
                         <v-layout justify-end>
@@ -180,9 +181,13 @@ export default {
     }
   },
   mounted () {
+    console.log(this.boulder)
     if (this.userIsAuthenticated) {
       let userRating = null
-      const userReview = this.boulder.reviews.find(review => review.author === this.$store.getters.user.id)
+      let userReview = null
+      if (this.boulder.reviews) {
+        userReview = this.boulder.reviews.find(review => review.author === this.$store.getters.user.id)
+      }
       if (userReview) { userRating = userReview.rating }
       for (let i = 1; i <= userRating; i++) {
         this.$refs[`star${i}`][0].checked = true

@@ -7,15 +7,14 @@
     </v-layout>
     <v-layout row>
       <v-flex xs12>
-        <form @submit.prevent="onCreateBoulder">
+        <form @submit.prevent="onCreateBoulder" v-if="!loading">
           <v-layout row >
             <v-flex xs12 sm6 offset-sm3>
               <v-text-field
                 name="name"
                 label="Name"
                 id="name"
-                v-model="name"
-                required>
+                v-model="name">
               </v-text-field>
             </v-flex>
           </v-layout>
@@ -25,20 +24,32 @@
                 name="grade"
                 label="Grade"
                 id="grade"
-                v-model="grade"
-                required>
+                v-model="grade">
               </v-text-field>
            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs12 sm6 offset-sm3>
+             <v-select
+                label="Gym"
+                v-bind:items="gyms"
+                required
+                autocomplete
+                :value="user.gym.id"
+                v-model="gym"
+                @select="gymChanged"
+                ref="gyms">
+            </v-select>
+            </v-flex>
           </v-layout>
           <v-layout>
            <v-flex xs12 sm6 offset-sm3>
               <v-text-field
                 name="description"
-                label="Description"
+                label="Comment"
                 id="description"
                 v-model="description"
-                multi-line
-                required>
+                multi-line>
               </v-text-field>
            </v-flex>
           </v-layout>
@@ -52,6 +63,7 @@
               style="display:none"
               ref="fileInput"
               accept="image/*"
+              required
               @change="onFilePicked">
            </v-flex>
           </v-layout>
@@ -80,22 +92,24 @@
 </template>
 
 <script>
+import Api from '@/services/Api'
 export default {
   data () {
     return {
       name: '',
       grade: '',
       description: '',
-      image: 'http://boulderrockclub.com/wp-content/uploads/2012/08/laura-910x340.jpg',
-      rawImage: ''
+      image: '',
+      rawImage: '',
+      gyms: null,
+      user: this.$store.getters.user,
+      loading: true,
+      gym: null
     }
   },
   computed: {
     formIsValid () {
-      return this.title !== '' &&
-        this.grade !== '' &&
-        this.description !== '' &&
-        this.image !== ''
+      return this.$refs.gyms !== ''
     }
   },
   methods: {
@@ -110,7 +124,8 @@ export default {
         name: this.name,
         grade: this.grade,
         description: this.description,
-        image: this.rawImage
+        image: this.rawImage,
+        gym: {name: this.gyms.find(gym => gym.value === this.gym).text, id: this.gym}
       }
       this.$store.dispatch('createBoulder', boulderData)
       this.$router.push('/boulders')
@@ -130,6 +145,16 @@ export default {
       })
       fileReader.readAsDataURL(files[0])
       this.rawImage = files[0]
+    }
+  },
+  async mounted () {
+    console.log(this.user)
+    try {
+      this.gyms = (await Api().get(`gyms/`)).data
+        .map(gym => { return {'text': gym.name, 'value': gym._id} })
+      this.loading = false
+    } catch (err) {
+      console.log(err)
     }
   }
 }

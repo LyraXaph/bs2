@@ -10,23 +10,24 @@
         </router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-xs-only"  >
+      <v-toolbar-items class="hidden-xs-only">
         <v-btn 
-        flat
-        v-for="item in menuItems"
-        :key="item.title"
-        router
-        :to="item.link">        
+          flat
+          exact 
+          v-for="item in menuItems"
+          :key="item.title"
+          router
+          :to="item.link">        
           <v-icon left>{{ item.icon }}</v-icon>
           {{ item.title }}
-          </v-btn>
-          <v-btn 
+        </v-btn>
+        <v-btn 
           flat
           v-if="userIsAuthenticated"
           @click="onLogout">        
           <v-icon left>exit_to_app</v-icon>
           Logout
-          </v-btn>
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <main>
@@ -70,10 +71,12 @@
           { icon: 'trending_up', title: 'View Boulders', link: '/boulders' },
           { icon: 'face', title: 'Register', link: '/register' },
           { icon: 'lock_open', title: 'Sign in', link: '/signin' }
+
         ]
         if (this.userIsAuthenticated) {
           menuItems = [
-            { icon: 'trending_up', title: 'View Boulders', link: '/boulders' },
+            { icon: 'add', title: 'Add Boulder', link: '/boulders/new' },
+            { icon: 'trending_up', title: 'Boulders', link: '/boulders' },
             { icon: 'room', title: 'View Gyms', link: '/gyms' },
             { icon: 'person', title: 'Profile', link: '/profile' }
           ]
