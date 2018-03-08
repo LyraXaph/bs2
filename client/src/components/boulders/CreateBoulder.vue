@@ -37,7 +37,6 @@
                 autocomplete
                 :value="user.gym.id"
                 v-model="gym"
-                @select="gymChanged"
                 ref="gyms">
             </v-select>
             </v-flex>

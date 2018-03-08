@@ -22,7 +22,7 @@
                             <span> {{ !userClimbed ? 'Add to climbed boulders' : 'Remove from climbed boulders' }}</span>
                           </v-tooltip>
                         </v-btn>
-                        <template v-if="userIsCreateor">
+                        <template v-if="userIsCreator">
                             <app-edit-boulder-dialog :boulder="boulder"></app-edit-boulder-dialog>
                         </template>
                     </v-card-title>
@@ -146,7 +146,7 @@ export default {
     userIsAuthenticated () {
       return this.$store.getters.user !== null && this.$store.getters.user !== undefined
     },
-    userIsCreateor () {
+    userIsCreator () {
       if (!this.userIsAuthenticated) {
         return false
       }

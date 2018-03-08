@@ -124,18 +124,22 @@ exports.autoSignIn = async (req, res) => {
 exports.getUserById = async (req, res) => {
     try { 
         const user = await User.findById(req.params.userId);
-        return res.status(200).json({
-            user: { 
-                email: user.email,
-                name: user.name, 
-                lastname: user.lastname,
-                gym: user.gym,
-                climbedBoulders: user.climbedBoulders
-            }
-        });
-    }  catch(err) {
+        if (user) {
+            return res.status(200).json({
+                user: { 
+                    email: user.email,
+                    name: user.name, 
+                    lastname: user.lastname,
+                    gym: user.gym,
+                    climbedBoulders: user.climbedBoulders
+                }
+            });
+        } else {
+            return res.status(404).send({ message: `User with id ${req.params.userId} was not found` });
+        }
+    } catch (err) {
         console.log(err);
-        return res.status(500).send({message : err});
+        return res.status(500).send({ message: err });
     }
 }
 
@@ -161,10 +165,11 @@ exports.updateUser = async (req, res, next) => {
    
 }
 
-exports.deleteUser = async(req, res) => {
-    try{
-       await User.findOneAndRemove({_id: req.params.id});
-       return res.status(200).json( {message : 'User deleted!'});
+exports.deleteUser = async (req, res) => {
+    try {
+        await User.findOneAndRemove({_id: req.params.userId});
+        return res.status(200).json( 
+            { message: `User with id ${req.params.userId} deleted!` });
     } catch(err) {
         console.log(err);
         return res.status(500).send(err);

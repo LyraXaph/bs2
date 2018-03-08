@@ -25,9 +25,9 @@
                     ><v-icon left>arrow_forward</v-icon>
                     View boulder
                   </v-btn>
-                  <v-btn flat @click="deleteBoulder(boulder)" >Delete</v-btn>
-                  <v-btn flat @click="climbedIt(boulder)">
-                        Climbed it!
+                  <v-btn flat @click="deleteBoulder(boulder)" v-if="userIsCreator(boulder)">Delete</v-btn>
+                  <v-btn flat @click="addRemoveBoulderToClimbed(boulder._id)" v-if="userIsAuthenticated">
+                        {{ !userClimbed(boulder._id) ? 'Add to climbed' : 'Remove from climbed' }}
                     </v-btn>
                 </v-card-actions>
               </v-flex>
@@ -48,12 +48,33 @@ export default {
     },
     baseServerImageUrl () {
       return this.$store.getters.baseServerImageUrl
+    },
+    userIsAuthenticated () {
+      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
     }
   },
   methods: {
     deleteBoulder (boulder) {
       this.$store.dispatch('deleteBoulder', boulder)
       this.$router.push('/boulders')
+    },
+    addRemoveBoulderToClimbed (boulderId) {
+      this.$store.dispatch('addRemoveBoulderToClimbed', boulderId)
+    },
+    userIsCreator (boulder) {
+      if (!this.userIsAuthenticated) {
+        return false
+      }
+      return this.$store.getters.user.id === boulder.creatorId
+    },
+    userClimbed (id) {
+      // check if boulderId is in the arrray (value is -1 if not)
+      if (!this.userIsAuthenticated) {
+        return false
+      }
+      return this.$store.getters.user.climbedBoulders.findIndex(boulderId => {
+        return boulderId === id
+      }) >= 0
     }
   }
 }
