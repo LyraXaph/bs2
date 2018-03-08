@@ -17,8 +17,9 @@ export default {
       state.loadedBoulders.splice(state.loadedBoulders.indexOf(payload), 1)
     },
     updateBoulder (state, payload) {
+      console.log(payload)
       const boulder = state.loadedBoulders.find(boulder => {
-        return boulder.id === payload.id
+        return boulder._id === payload._id
       })
       if (payload.name) {
         boulder.name = payload.name

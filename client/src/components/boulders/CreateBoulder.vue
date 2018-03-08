@@ -32,10 +32,9 @@
             <v-flex xs12 sm6 offset-sm3>
              <v-select
                 label="Gym"
-                v-bind:items="gyms"
+                :items="gyms"
                 required
                 autocomplete
-                :value="user.gym.id"
                 v-model="gym"
                 ref="gyms">
             </v-select>
@@ -103,7 +102,7 @@ export default {
       gyms: null,
       user: this.$store.getters.user,
       loading: true,
-      gym: null
+      gym: {'text': this.$store.getters.user.gym.name, 'value': this.$store.getters.user.gym._id}
     }
   },
   computed: {
@@ -124,7 +123,7 @@ export default {
         grade: this.grade,
         description: this.description,
         image: this.rawImage,
-        gym: {name: this.gyms.find(gym => gym.value === this.gym).text, id: this.gym}
+        gym: {name: this.gym.text, id: this.gym.value}
       }
       this.$store.dispatch('createBoulder', boulderData)
       this.$router.push('/boulders')
@@ -147,7 +146,6 @@ export default {
     }
   },
   async mounted () {
-    console.log(this.user)
     try {
       this.gyms = (await Api().get(`gyms/`)).data
         .map(gym => { return {'text': gym.name, 'value': gym._id} })

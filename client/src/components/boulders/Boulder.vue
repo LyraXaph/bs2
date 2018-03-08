@@ -26,10 +26,13 @@
                             <app-edit-boulder-dialog :boulder="boulder"></app-edit-boulder-dialog>
                         </template>
                     </v-card-title>
-                     <v-card-media
+                    <a :href="`${baseServerImageUrl}${boulder.image}`">
+                     <v-card-media 
+                        contain
                         :src="baseServerImageUrl + boulder.image"
-                        height="600px">
-                </v-card-media>
+                        height="600px">                    
+                      </v-card-media>
+                    </a>
                 <v-card-text>
                     <v-layout row>
                       <v-flex xs8>
@@ -181,7 +184,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.boulder)
+    console.log(`${this.baseServerImageUrl}${this.boulder.image}`)
     if (this.userIsAuthenticated) {
       let userRating = null
       let userReview = null
