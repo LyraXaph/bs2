@@ -49,6 +49,8 @@ export default {
         commit('setLoading', false)
         const newUser = {
           id: user.id,
+          username: user.username,
+          email: user.email,
           climbedBoulders: [],
           gym: user.gym
         }
@@ -69,6 +71,8 @@ export default {
         const newUser = {
           id: user.id,
           climbedBoulders: user.climbedBoulders,
+          username: user.username,
+          email: user.email,
           gym: user.gym
         }
         localStorage.setItem('token', response.data.token)

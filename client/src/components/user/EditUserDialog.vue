@@ -20,8 +20,7 @@
                                     name="name"
                                     label="Name"
                                     id="name"
-                                    v-model="editedName"
-                                    required>
+                                    v-model="editedName">
                                 </v-text-field>
                                  <v-text-field
                                     name="lastname"
@@ -35,6 +34,7 @@
                                     label="Gym"
                                     required
                                     autocomplete
+                                    ref="gyms"
                                     :value="user.gym.id">
                                 </v-select>
                         </v-card-text>
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     onSaveChanges () {
-      if (this.editedName.trim() === '') {
+      if (!this.$refs.gyms.value) {
         return
       }
       this.editDialog = false

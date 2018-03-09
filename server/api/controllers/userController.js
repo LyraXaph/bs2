@@ -42,6 +42,7 @@ exports.register = async (req, res, next) => {
             req.body.gym = '59ece0c7dd8ba60590437e5c';
             try {
                 user = await (new User(req.body)).save();
+                user = await User.findById(user._id).populate('gym', 'name');
                 return res.status(201).json({
                     user: user,
                     message: 'User created'
@@ -73,7 +74,7 @@ exports.login = async (req, res, next) => {
             });
         } 
         const result = await bcrypt.compare(req.body.password, user.password);
-        if(result){
+        if (result){
             const token = jwt.sign({
                 email: user.email,
                 id: user._id
@@ -86,6 +87,7 @@ exports.login = async (req, res, next) => {
                 token: token,
                 user: { 
                     email: user.email,
+                    username: user.username,
                     name: user.name,
                     lastname: user.lastname,
                     id: user._id,
@@ -96,7 +98,7 @@ exports.login = async (req, res, next) => {
         } else {
             return res.status(500).json({message: "Auth failed"});
         }
-    } catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).json({message: "Auth failed"});
     }
@@ -128,6 +130,7 @@ exports.getUserById = async (req, res) => {
             return res.status(200).json({
                 user: { 
                     email: user.email,
+                    username: user.username,
                     name: user.name, 
                     lastname: user.lastname,
                     gym: user.gym,
@@ -167,9 +170,14 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-        await User.findOneAndRemove({_id: req.params.userId});
-        return res.status(200).json( 
-            { message: `User with id ${req.params.userId} deleted!` });
+        const deletedUser = await User.findOneAndRemove({_id: req.params.userId});
+        if (deletedUser) {
+            return res.status(200).json( 
+                { message: `User with id ${req.params.userId} deleted!` });
+        } else {
+            return res.status(400).json( 
+                { message: `User with id ${req.params.userId} doesn't exist!` });
+        }
     } catch(err) {
         console.log(err);
         return res.status(500).send(err);

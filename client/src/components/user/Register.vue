@@ -16,10 +16,21 @@
                     <v-flex xs12>
                       <v-text-field
                         name="email"
-                        label="Mail"
+                        label="Email Address"
                         id="email"
                         v-model="email"
                         type="email"
+                        required>
+                      </v-text-field>
+                    </v-flex>
+                  </v-layout>
+                  <v-layout row>
+                    <v-flex xs12>
+                      <v-text-field
+                        name="username"
+                        label="Username"
+                        id="username"
+                        v-model="username"
                         required>
                       </v-text-field>
                     </v-flex>
@@ -74,6 +85,7 @@ export default {
     return {
       email: '',
       password: '',
+      username: '',
       confirmPassword: ''
     }
   },
@@ -102,7 +114,8 @@ export default {
     onRegister () {
       this.$store.dispatch('registerUser', {
         email: this.email,
-        password: this.password
+        password: this.password,
+        username: this.username
       })
     },
     onDismissed () {

@@ -19,6 +19,7 @@
                       <app-edit-user-dialog :user="user"></app-edit-user-dialog>
                     </v-card-title>
                 <v-card-text>
+                    <h3> Username: {{ user.username }} </h3>
                     <h3> Name: {{ user.name }} </h3>
                     <h3> Lastname: {{ user.lastname }} </h3>
                     <h3> Email: {{ user.email }} </h3>
