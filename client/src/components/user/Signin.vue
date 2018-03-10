@@ -45,6 +45,12 @@
                           <v-icon>cached</v-icon>
                         </span>
                       </v-btn>
+                      <v-btn 
+                        class="right"
+                        @click="$router.push('/register')"
+                        :disabled="loading">
+                        Register  
+                      </v-btn>
                     </v-flex>
                   </v-layout>
                 </form>
@@ -96,6 +102,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.right {
+  position: float right
+}
 </style>
