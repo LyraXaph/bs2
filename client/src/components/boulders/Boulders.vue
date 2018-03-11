@@ -8,6 +8,8 @@
               <v-flex xs5 sm3 md3>
                 <v-card-media
                   :src="baseServerImageUrl + boulder.image"
+                  @click="$router.push(`/boulder/${boulder._id}`)"
+                  class="clickable"
                   height="130px">
                 </v-card-media>
               </v-flex>
@@ -21,11 +23,6 @@
                   </div>
                 </v-card-title>
                  <v-card-actions>
-                  <v-btn flat 
-                    :to="'/boulder/' + boulder._id"
-                    ><v-icon left>arrow_forward</v-icon>
-                    View boulder
-                  </v-btn>
                   <v-btn flat @click="deleteBoulder(boulder)" v-if="userIsCreator(boulder)">Delete</v-btn>
                   <v-btn flat @click="addRemoveBoulderToClimbed(boulder._id)" v-if="userIsAuthenticated">
                         {{ !userClimbed(boulder._id) ? 'Add to climbed' : 'Remove from climbed' }}
@@ -82,5 +79,10 @@ export default {
 </script>
 
 <style>
-
+  .clickable { 
+    cursor: pointer;
+  }
+  .clickable:hover { 
+    opacity: .7;
+  }
 </style>
