@@ -46,7 +46,6 @@ export default {
       try {
         const response = await Api().post('users/register', payload)
         const user = response.data.user
-        commit('setLoading', false)
         const newUser = {
           id: user.id,
           username: user.username,
@@ -54,8 +53,10 @@ export default {
           climbedBoulders: [],
           gym: user.gym
         }
+        localStorage.setItem('token', response.data.token)
         commit('setUser', newUser)
         commit('setToken', response.data.token)
+        commit('setLoading', false)
       } catch (error) {
         commit('setLoading', false)
         commit('setError', error.response.data.message)

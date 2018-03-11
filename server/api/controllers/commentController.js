@@ -1,9 +1,8 @@
 const Comment = require('./../models/Comment');
 
 exports.getComments =  async (req, res) => {
-    let comments = null
     try {
-        comments = await Comment.find();
+        const comments = await Comment.find();
         return res.status(200).json(comments);
     }
     catch (err) {
@@ -39,7 +38,6 @@ exports.getComment = async (req, res, next) => {
 }
 
 exports.deleteComment = async (req, res, next) => {
-    console.log(req.params.commentId)
     try {
         await Comment.findOneAndRemove({_id: req.params.commentId});
         return res.status(200).json({

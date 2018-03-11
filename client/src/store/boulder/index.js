@@ -66,6 +66,7 @@ export default {
     },
     async createBoulder ({commit, getters}, payload) {
       commit('setLoading', true)
+      const token = localStorage.getItem('token')
       const boulder = {
         name: payload.name,
         grade: payload.grade,
@@ -81,7 +82,7 @@ export default {
         form.append('creatorId', boulder.creatorId)
         form.append('gym', boulder.gym.id)
         form.append('description', boulder.description)
-        const data = (await Api().post('boulders/', form)).data
+        const data = (await Api().post('boulders/', form, { headers: { 'Authorization': `bearer ${token}` } })).data
         if (data.success) {
           console.log(data)
           boulder._id = data.boulderId
@@ -148,8 +149,9 @@ export default {
       }
     },
     async removeComment ({commit}, payload) {
+      const token = localStorage.getItem('token')
       try {
-        await Api().delete(`comments/${payload.commentId}`)
+        await Api().delete(`comments/${payload.commentId}`, { headers: { 'Authorization': `bearer ${token}` } })
         commit('removeComment', {
           commentId: payload.commentId,
           boulderId: payload.boulderId
@@ -157,7 +159,6 @@ export default {
       } catch (error) {
         commit('setError', error.response.data.message)
         console.log(error.response.data.message)
-        // console.log(error)
       }
     },
     async rateBoulder ({commit, getters}, payload) {

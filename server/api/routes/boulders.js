@@ -8,7 +8,7 @@ router.get('/', BoulderController.getBoulders);
 router.get('/:boulderId', BoulderController.getBoulder);
 
 router.post('/', 
-   // checkAuth,
+    checkAuth,
     BoulderController.upload, 
     BoulderController.resize, 
     BoulderController.createBoulder);

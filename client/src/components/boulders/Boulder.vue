@@ -78,42 +78,49 @@
               <v-flex xs12 sm6 class="pr-3">
                 <v-card>
                     <v-card-title class="primary--text">
-                        <h2>Comments</h2>
+                      <h2>Comments</h2>
                     </v-card-title>
-              <form  @submit.prevent="addComment">
-                <v-card-text>
-                  <v-list three-line>
-                    <template v-for="(comment, index) in boulder.comments"> 
-                      <v-list-tile v-bind:key="comment._id" >
-                        <v-list-tile-avatar>
-                          <v-btn fab small absolute left @click="removeComment(comment._id)">
-                              <v-icon>delete</v-icon>
-                            </v-btn>
-                        </v-list-tile-avatar>
-                        <v-list-tile-content >
-                          <v-list-tile-title v-html="comment.author.name"></v-list-tile-title>
-                          <v-list-tile-sub-title v-html="comment.text"></v-list-tile-sub-title> 
-                        </v-list-tile-content>
-                      </v-list-tile>
-                    </template>  
-                  </v-list>
-                   <v-flex xs12>
-                      <v-text-field
-                        name="newComment"
-                        label="Comment"
-                        id="newComment"
-                        v-model="text"
-                        required
-                        multi-line>
-                      </v-text-field>
-                    </v-flex>
-                  </v-card-text>
-                    <v-btn 
-                        class="primary"
-                        type="submit"
-                        :disabled="!formIsValid">
-                        Leave Comment
-                      </v-btn>
+                      <form  @submit.prevent="addComment">
+                        <v-card-text>
+                          <v-flex xs12>
+                           <v-text-field
+                              name="newComment"
+                              label="Comment"
+                              id="newComment"
+                              v-model="text"
+                              required
+                              multi-line
+                              rows=3>
+                           </v-text-field>
+                          <v-btn 
+                            class="primary"
+                            type="submit"
+                            :disabled="!formIsValid">
+                            Leave Comment
+                          </v-btn>
+                          </v-flex>
+                          <v-list three-line>
+                            <template v-for="(comment) in boulder.comments"> 
+                              <v-list-tile v-bind:key="comment._id" >
+                                <v-list-tile-avatar>
+                                  <v-btn 
+                                    fab
+                                    small
+                                    absolute
+                                    left
+                                    @click="removeComment(comment._id)"
+                                    v-if="comment.author && user.id === comment.author.id">
+                                      <v-icon>delete</v-icon>
+                                    </v-btn>
+                                </v-list-tile-avatar>
+                                <v-list-tile-content >
+                                  <v-list-tile-title v-html="comment.author.username" v-if="comment.author"></v-list-tile-title>
+                                  <v-list-tile-sub-title v-html="comment.text"></v-list-tile-sub-title> 
+                                </v-list-tile-content>
+                              </v-list-tile>
+                            </template>  
+                          </v-list>
+                      </v-card-text>
                    </form>
                 </v-card>
             </v-flex>
@@ -129,7 +136,8 @@ export default {
       text: '',
       rating: '',
       avgRating: '',
-      numbers: [5, 4, 3, 2, 1]
+      numbers: [5, 4, 3, 2, 1],
+      user: this.$store.getters.user
     }
   },
   props: ['id'],
@@ -165,7 +173,7 @@ export default {
       }) >= 0
     },
     formIsValid () {
-      return this.text !== ''
+      return this.text !== '' && this.userIsAuthenticated
     }
   },
   methods: {
@@ -184,7 +192,6 @@ export default {
     }
   },
   mounted () {
-    console.log(`${this.baseServerImageUrl}${this.boulder.image}`)
     if (this.userIsAuthenticated) {
       let userRating = null
       let userReview = null

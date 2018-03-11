@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const CommentController = require('./../controllers/commentController');
+const checkAuth =require('./../middleware/check-auth');
 
 router.get('/', CommentController.getComments);
 
@@ -10,6 +11,6 @@ router.get('/:commentId', CommentController.getComment);
 
 // router.patch('/:reviewId', ReviewController.updateReview);
 
-router.delete('/:commentId', CommentController.deleteComment);
+router.delete('/:commentId', checkAuth, CommentController.deleteComment);
 
 module.exports = router;

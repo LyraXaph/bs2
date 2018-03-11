@@ -8,6 +8,7 @@ import Profile from '@/components/user/Profile'
 import Register from '@/components/user/Register'
 import Signin from '@/components/user/Signin'
 import AuthGuard from './auth-guard'
+import Users from '@/components/user/Users'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/boulders',
       name: 'Boulders',
       component: Boulders
+    },
+    {
+      path: '/users',
+      name: 'Users',
+      component: Users
     },
     {
       path: '/boulders/new',

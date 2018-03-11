@@ -43,8 +43,16 @@ exports.register = async (req, res, next) => {
             try {
                 user = await (new User(req.body)).save();
                 user = await User.findById(user._id).populate('gym', 'name');
+                const token = jwt.sign({
+                    email: user.email,
+                    id: user._id
+                    }, 
+                    process.env.JWT_SECRET
+                    // { expiresIn: "1h"}
+                );
                 return res.status(201).json({
                     user: user,
+                    token: token,
                     message: 'User created'
                 });
             } catch (err) {
@@ -78,9 +86,9 @@ exports.login = async (req, res, next) => {
             const token = jwt.sign({
                 email: user.email,
                 id: user._id
-            }, 
-            process.env.JWT_SECRET
-            // { expiresIn: "1h"}
+                }, 
+                process.env.JWT_SECRET
+                // { expiresIn: "1h"}
             );
             return res.status(200).json({
                 message: "Auth successful", 
