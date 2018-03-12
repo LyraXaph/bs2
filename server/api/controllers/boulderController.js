@@ -37,7 +37,7 @@ exports.getBoulder =  async (req, res) => {
     let boulder = {};
     try {
         boulder = await Boulder.findById(req.params.boulderId)
-                        .populate('reviews comments').lean().exec(); // lean().exec() produces native js objects instead of models
+                        .populate('reviews comments').populate('creator', 'username').lean().exec(); // lean().exec() produces native js objects instead of models
         boulder.avgRating = (await Boulder.getAvgRating(req.params.boulderId))[0].averageRating;
         res.status(200).json(boulder);
     } catch (err) {
@@ -65,7 +65,7 @@ exports.getBoulders =  async (req, res) => {
             .limit(5);  
     } else {
         try {
-            boulders = await Boulder.find().populate('reviews comments').lean().exec();
+            boulders = await Boulder.find().populate('reviews comments').populate('creator', 'username').lean().exec();
             Promise.all(
                 boulders.map(async (boulder) => { 
                     boulder.avgRating = (await Boulder.getAvgRating(boulder._id))[0].averageRating;
@@ -83,7 +83,8 @@ exports.getBoulders =  async (req, res) => {
 }
 
 exports.createBoulder = async (req, res, next) => {
-    try{
+    try {
+        console.log(req.body)
         const boulder = await (new Boulder(req.body)).save();
         res.status(200).json({
             success: true,

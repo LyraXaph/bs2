@@ -21,7 +21,7 @@ const boulderSchema = new Schema({
         dafault: Date.now
     }, 
     image: String, 
-    creatorId: {
+    creator: {
         type: mongoose.Schema.ObjectId,
         ref: 'User', 
         required: 'You must supply an author!'
