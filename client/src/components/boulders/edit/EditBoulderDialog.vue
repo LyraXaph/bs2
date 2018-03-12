@@ -71,11 +71,11 @@ export default {
   },
   methods: {
     onSaveChanges () {
-      if (this.editedName.trim() === '' ||
+     /* if (this.editedName.trim() === '' ||
        this.editedDescription === '' ||
        this.editGrade === '') {
         return
-      }
+      } */
       this.editDialog = false
       this.$store.dispatch('updateBoulder', {
         _id: this.boulder._id,

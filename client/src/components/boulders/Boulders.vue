@@ -5,13 +5,16 @@
         <v-card class="info">
           <v-container fluid>
             <v-layout row>
-              <v-flex xs5 sm3 md3>
+              <v-flex xs5 sm3 md3 class="container">
                 <v-card-media
                   :src="baseServerImageUrl + boulder.image"
                   @click="$router.push(`/boulder/${boulder._id}`)"
-                  class="clickable"
+                  :class="classesImage(boulder._id)"
                   height="130px">
                 </v-card-media>
+                <div :class="classes(boulder._id)">
+                  <v-icon x-large>done</v-icon>
+                </div>
               </v-flex>
               <v-flex xs7 sm8 md9>
                 <v-card-title primary-title>
@@ -65,6 +68,20 @@ export default {
       }
       return this.$store.getters.user.id === boulder.creatorId
     },
+    classes (boulderId) {
+      let classes = 'notClimbed'
+      if (this.userClimbed(boulderId)) {
+        classes = 'climbed'
+      }
+      return classes
+    },
+    classesImage (boulderId) {
+      let classes = 'clickable'
+      if (this.userClimbed(boulderId)) {
+        classes += ' climbedImage'
+      }
+      return classes
+    },
     userClimbed (id) {
       // check if boulderId is in the arrray (value is -1 if not)
       if (!this.userIsAuthenticated) {
@@ -82,7 +99,33 @@ export default {
   .clickable { 
     cursor: pointer;
   }
+
   .clickable:hover { 
     opacity: .7;
   }
+
+  .climbed {
+    position: absolute;
+    bottom: 15px;
+    right: 16px;
+  }
+
+  .notClimbed {
+    visibility: hidden;
+    position: absolute;
+    bottom: 15px;
+    right: 16px;
+  } 
+
+  .climbedImage {
+    border:greenyellow;
+    border-style: solid;
+  }
+
+  .container {
+    position: relative;
+    text-align: center;
+    color: white;
+  }
+  
 </style>

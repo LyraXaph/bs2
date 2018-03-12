@@ -35,12 +35,12 @@
                     </a>
                 <v-card-text>
                     <v-layout row>
-                      <v-flex xs8>
-                        <strong> Author's comment:</strong> {{ boulder.description }}</br> 
-                        <span class="text-xs-left">Grade by author: {{ boulder.grade }} </span></br>
-                        <span class="text-xs-right">Avg grade: {{ boulder.grade }}</span></br>
-                        <span class="text-xs-right">Avg rating: {{ boulder.avgRating }}</span></br>
-                        <span class="text-xs-right">Gym: {{ boulder.gym.name }}</span>
+                      <v-flex xs8 class="text-xs-left">
+                        <strong> Author's comment:</strong> {{ boulder.description }}<br> 
+                        <span >Grade by author: {{ boulder.grade }} </span><br>
+                        <span>Avg grade: {{ boulder.grade }}</span><br>
+                        <span>Avg rating: {{ boulder.avgRating }}</span><br>
+                        <span>Gym: {{ boulder.gym.name }}</span>
                       </v-flex>
                       <v-flex xs4>
                         <v-layout justify-end>
@@ -73,7 +73,7 @@
                       </v-flex>
                     </v-layout>
                 </v-card-text>
-                </v-card>
+              </v-card>
             </v-flex>
               <v-flex xs12 sm6 class="pr-3">
                 <v-card>
