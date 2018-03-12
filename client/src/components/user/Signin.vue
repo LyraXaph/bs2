@@ -40,6 +40,7 @@
                     <v-flex xs12>
                       <v-btn
                         type="submit"
+                        class="left"
                         :disabled="loading" :loading="loading">Sign in
                          <span slot="loader" class="custom-loader">
                           <v-icon>cached</v-icon>

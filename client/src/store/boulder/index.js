@@ -87,6 +87,7 @@ export default {
           console.log(data)
           boulder._id = data.boulderId
           boulder.image = data.boulderImage
+          boulder.creator = { _id: getters.user.id, username: getters.user.username }
           commit('createBoulder', boulder)
           commit('setLoading', false)
         } else {

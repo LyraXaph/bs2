@@ -109,7 +109,7 @@
                                     absolute
                                     left
                                     @click="removeComment(comment._id)"
-                                    v-if="comment.author && user.id === comment.author.id">
+                                    v-if="user && comment.author && user.id === comment.author.id">
                                       <v-icon>delete</v-icon>
                                     </v-btn>
                                 </v-list-tile-avatar>
@@ -161,7 +161,7 @@ export default {
       if (!this.userIsAuthenticated) {
         return false
       }
-      return this.$store.getters.user.id === this.boulder.creatorId
+      return this.$store.getters.user.id === this.boulder.creator._id
     },
     userClimbed () {
       // check if boulderId is in the arrray (value is -1 if not)
@@ -192,6 +192,8 @@ export default {
     }
   },
   mounted () {
+    // console.log(this.$store.getters.user.id)
+    // console.log(this.boulder.creator._id)
     if (this.userIsAuthenticated) {
       let userRating = null
       let userReview = null

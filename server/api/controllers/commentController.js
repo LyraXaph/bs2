@@ -29,7 +29,7 @@ exports.addComment = async (req, res, next) => {
 
 exports.getComment = async (req, res, next) => {
     try {
-        const comment = await Comment.findById(req.params.commentId).populate('author', '-_id -salt -hash');
+        const comment = await Comment.findById(req.params.commentId).populate('author', 'username');
         res.status(200).json(comment);
     }  catch(err) {
         console.log(err);

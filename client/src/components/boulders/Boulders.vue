@@ -18,11 +18,11 @@
               </v-flex>
               <v-flex xs7 sm8 md9>
                 <v-card-title primary-title>
-                  <div>
+                   <div class="text-xs-left">
                     <h3 class="headline mb-0">{{ boulder.name }}</h3>
-                    <div>{{ boulder.description }}</div>
-                    <div> Avg rating: {{ boulder.avgRating }}</div>
-                    <div> Author: {{ boulder.creator.username }}</div>
+                    <span v-if="boulder.description"> Comment: {{ boulder.description }}</span><br>
+                    <span> Avg rating: {{ boulder.avgRating }}</span><br>
+                    <span> Author: {{ boulder.creator.username }}</span>
                   </div>
                 </v-card-title>
                  <v-card-actions>
@@ -66,7 +66,7 @@ export default {
       if (!this.userIsAuthenticated) {
         return false
       }
-      return this.$store.getters.user.id === boulder.creatorId
+      return this.$store.getters.user.id === boulder.creator._id
     },
     classes (boulderId) {
       let classes = 'notClimbed'
@@ -95,7 +95,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .clickable { 
     cursor: pointer;
   }

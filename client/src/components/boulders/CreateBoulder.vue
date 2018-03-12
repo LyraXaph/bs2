@@ -2,7 +2,7 @@
   <v-container>
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <h4 class="primary--text">Add a new Boulder</h4>
+        <h2 class="primary--text">Add a new Boulder</h2>
       </v-flex>
     </v-layout>
     <v-layout row>
@@ -102,7 +102,7 @@ export default {
       gyms: null,
       user: this.$store.getters.user,
       loading: true,
-      gym: {'text': this.$store.getters.user.gym.name, 'value': this.$store.getters.user.gym._id}
+      gym: null
     }
   },
   computed: {
@@ -123,7 +123,7 @@ export default {
         grade: this.grade,
         description: this.description,
         image: this.rawImage,
-        gym: {name: this.gym.text, id: this.gym.value}
+        gym: {name: this.$refs.gyms.selectedItem.text, id: this.$refs.gyms.selectedItem.value}
       }
       this.$store.dispatch('createBoulder', boulderData)
       this.$router.push('/boulders')
@@ -153,6 +153,7 @@ export default {
     } catch (err) {
       console.log(err)
     }
+    this.gym = {'text': this.$store.getters.user.gym.name, 'value': this.$store.getters.user.gym._id}
   }
 }
 </script>
