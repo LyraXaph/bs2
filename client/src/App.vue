@@ -1,9 +1,31 @@
 <template>
   <v-app dark>
-    <v-toolbar app class="primary">
+    <v-navigation-drawer temporary v-model="sideNav" absolute>
+      <v-list>
+        <v-list-tile 
+          v-for="item in menuItems" 
+          :key="item.title"
+          router
+          :to="item.link">
+          <v-list-tile-action>
+            <v-icon left>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>{{ item.title }}</v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile 
+          v-if="userIsAuthenticated" 
+          @click="onLogout"> 
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar class="primary">
       <v-toolbar-side-icon @click="sideNav=!sideNav"
-        class="hidden-sm-and-up"
-      ></v-toolbar-side-icon>
+        class="hidden-sm-and-up">
+      </v-toolbar-side-icon>
       <v-toolbar-title>
         <router-link to="/" tag="span" style="cursor:pointer">
           Bouldershare
@@ -33,28 +55,6 @@
     <main>
         <router-view></router-view>
     </main>
-    <v-navigation-drawer app v-model="sideNav" temporary>
-      <v-list>
-        <v-list-tile 
-          v-for="item in menuItems" 
-          :key="item.title"
-          router
-          :to="item.link">
-          <v-list-tile-action>
-            <v-icon left>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>{{ item.title }}</v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile 
-          v-if="userIsAuthenticated" 
-          @click="onLogout"> 
-          <v-list-tile-action>
-            <v-icon>exit_to_app</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>Logout</v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
   </v-app>
 </template>
 
