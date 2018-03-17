@@ -4,7 +4,15 @@ const FormData = require('form-data')
 export default {
   state: {
     loadedBoulders: [],
-    baseServerImageUrl: `http://localhost:7777/public/uploads/`
+    baseServerImageUrl: `http://localhost:7777/public/uploads/`,
+    grades: [
+      '', '3', '3+',
+      '4', '4+',
+      '5', '5A', '5A+', '5B', '5B+', '5C', '5C+',
+      '6', '6A', '6A+', '6B', '6B+', '6C', '6C+',
+      '7', '7A', '7A+', '7B', '7B+', '7C', '7C+',
+      '8', '8A', '8A+', '8B', '8B+', '8C', '8C+'
+    ]
   },
   mutations: {
     setLoadedBoulders (state, payload) {
@@ -198,6 +206,9 @@ export default {
     },
     baseServerImageUrl (state) {
       return state.baseServerImageUrl
+    },
+    grades (state) {
+      return state.grades
     }
   }
 }

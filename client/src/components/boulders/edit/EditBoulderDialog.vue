@@ -1,7 +1,10 @@
 <template>
     <v-dialog width="350px" persistent v-model="editDialog">
         <v-btn fab accent slot="activator"> 
-            <v-icon>edit</v-icon>
+            <v-tooltip top>
+                <v-icon slot="activator">edit</v-icon>
+                <span>Edit boulder</span>
+            </v-tooltip>
         </v-btn>
         <v-card>
             <v-container>
@@ -20,23 +23,21 @@
                                     name="name"
                                     label="Name"
                                     id="name"
-                                    v-model="editedName"
-                                    required>
+                                    v-model="editedName">
                                 </v-text-field>
-                                <v-text-field
+                                <v-select
                                     name="grade"
+                                    :items="grades"
                                     label="Grade"
                                     id="grade"
-                                    v-model="editedGrade"
-                                    required>
-                                </v-text-field>
+                                    v-model="editedGrade">
+                                </v-select>
                                 <v-text-field
                                     name="description"
                                     label="Description"
                                     id="description"
                                     v-model="editedDescription"
-                                    multi-line
-                                    required>
+                                    multi-line>
                                 </v-text-field>
                         </v-card-text>
                     </v-flex>
@@ -66,7 +67,8 @@ export default {
       editDialog: false,
       editedName: this.boulder.name,
       editedDescription: this.boulder.description,
-      editedGrade: this.boulder.grade
+      editedGrade: this.boulder.grade,
+      grades: this.$store.getters.grades
     }
   },
   methods: {

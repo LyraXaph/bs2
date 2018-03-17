@@ -23,7 +23,8 @@
                           </v-tooltip>
                         </v-btn>
                         <template v-if="userIsCreator">
-                            <app-edit-boulder-dialog :boulder="boulder"></app-edit-boulder-dialog>
+                          <app-edit-boulder-dialog :boulder="boulder">  
+                          </app-edit-boulder-dialog>
                         </template>
                     </v-card-title>
                     <a :href="`${baseServerImageUrl}${boulder.image}`">
@@ -35,39 +36,39 @@
                     </a>
                 <v-card-text>
                     <v-layout row>
-                      <v-flex xs8 class="text-xs-left">
+                      <v-flex xs6 class="text-xs-left">
                         <strong> Author's comment:</strong> {{ boulder.description }}<br> 
-                        <span >Grade by author: {{ boulder.grade }} </span><br>
+                        <span>Grade by author: {{ boulder.grade }} </span><br>
                         <span>Avg grade: {{ boulder.grade }}</span><br>
-                        <span>Avg rating: {{ boulder.avgRating }}</span><br>
+                        <span>Avg rating: {{ boulder.avgRating || 'No ratings yet'}}</span><br>
                         <span>Gym: {{ boulder.gym.name }}</span>
                       </v-flex>
-                      <v-flex xs4>
+                      <v-flex xs6>
                         <v-layout justify-end>
                           <v-card-actions v-if="userIsAuthenticated">
-                            <form class="reviewer" @submit.prevent="rateBoulder">
-                              <div class="reviewer__meta">
-                                  <div class="reviewer__stars" >
-                                    <template v-for="i in numbers">
-                                      <input 
-                                        type="radio"
-                                        required 
-                                        name="rating"
-                                        v-model="rating"
-                                        :value="i"
-                                        :ref="'star' + i"
-                                        :key="i"
-                                        :id="'star' + i">
-                                      <label :for="'star' + i"></label>
-                                    </template>
+                              <form class="reviewer" @submit.prevent="rateBoulder">
+                                <div class="reviewer__meta">
+                                    <div class="reviewer__stars" >
+                                      <template v-for="i in numbers">
+                                        <input 
+                                          type="radio"
+                                          required 
+                                          name="rating"
+                                          v-model="rating"
+                                          :value="i"
+                                          :ref="'star' + i"
+                                          :key="i"
+                                          :id="'star' + i">
+                                        <label :for="'star' + i"></label>
+                                      </template>
+                                    </div>
                                   </div>
-                                </div>
-                                <v-btn 
-                                  class="primary"
-                                  type="submit">
-                                  Rate boulder
-                                </v-btn>
-                            </form>
+                                  <v-btn 
+                                    class="primary"
+                                    type="submit">
+                                    Rate boulder
+                                  </v-btn>
+                              </form>
                           </v-card-actions>
                         </v-layout>
                       </v-flex>
@@ -137,7 +138,8 @@ export default {
       rating: '',
       avgRating: '',
       numbers: [5, 4, 3, 2, 1],
-      user: this.$store.getters.user
+      user: this.$store.getters.user,
+      grades: this.$store.getters.grades
     }
   },
   props: ['id'],

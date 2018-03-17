@@ -20,12 +20,13 @@
           </v-layout>
           <v-layout>
            <v-flex xs12 sm6 offset-sm3>
-              <v-text-field
+              <v-select
                 name="grade"
+                :items="grades"
                 label="Grade"
                 id="grade"
                 v-model="grade">
-              </v-text-field>
+              </v-select>
            </v-flex>
           </v-layout>
           <v-layout>
@@ -102,7 +103,8 @@ export default {
       gyms: null,
       user: this.$store.getters.user,
       loading: true,
-      gym: null
+      gym: null,
+      grades: this.$store.getters.grades
     }
   },
   computed: {

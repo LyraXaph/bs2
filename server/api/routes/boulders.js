@@ -15,6 +15,8 @@ router.post('/',
 
 router.get('/:slug', BoulderController.getBoulderBySlug);
 
+router.get('/grade/:grade', BoulderController.getBouldersByGrade);
+
 router.patch('/:boulderId', BoulderController.updateBoulder);
 
 router.delete('/:boulderId', BoulderController.deleteBoulder);

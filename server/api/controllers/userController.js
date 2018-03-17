@@ -120,6 +120,7 @@ exports.autoSignIn = async (req, res) => {
                 email: user.email,
                 name: user.name,
                 lastname: user.lastname,
+                username: user.username,
                 id: user._id,
                 gym: user.gym,
                 climbedBoulders: user.climbedBoulders

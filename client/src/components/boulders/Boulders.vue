@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-layout row wrap  v-for="boulder in boulders" :key="boulder._id" class="mb-2">
+    <v-layout row>
+      <v-flex xs12 sm10 md8 offset-sm1 offset-md2>
+        <v-text-field type="text" v-model="search" placeholder="Search boulders"></v-text-field>
+      </v-flex> 
+    </v-layout>
+    <v-layout row wrap  v-for="boulder in filteredBoulders" :key="boulder._id" class="mb-2">
       <v-flex xs12 sm10 md8 offset-sm1 offset-md2>
         <v-card class="info">
           <v-container fluid>
@@ -20,8 +25,9 @@
                 <v-card-title primary-title>
                    <div class="text-xs-left">
                     <h3 class="headline mb-0">{{ boulder.name }}</h3>
+                    <span v-if="boulder.grade"> Grade: {{ boulder.grade }}</span><br>
                     <span v-if="boulder.description"> Comment: {{ boulder.description }}</span><br>
-                    <span> Avg rating: {{ boulder.avgRating }}</span><br>
+                    <span v-if="boulder.avgRating"> Avg rating: {{ boulder.avgRating }}</span><br>
                     <span> Author: {{ boulder.creator.username }}</span>
                   </div>
                 </v-card-title>
@@ -42,6 +48,11 @@
 
 <script>
 export default {
+  data () {
+    return {
+      search: ''
+    }
+  },
   computed: {
     boulders () {
       console.log(this.$store.getters.loadedBoulders)
@@ -52,6 +63,17 @@ export default {
     },
     userIsAuthenticated () {
       return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+    },
+    filteredBoulders () {
+      console.log(this.search)
+      if(this.search) {
+        return this.boulders.filter(boulder => {
+          return (boulder.grade === this.search || 
+            boulder.creator.username === this.search)
+        })
+      } else {
+        return this.boulders
+      } 
     }
   },
   methods: {

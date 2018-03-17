@@ -109,6 +109,16 @@ exports.getBoulderBySlug = async (req, res, next) => {
     }
 }
 
+exports.getBouldersByGrade = async (req, res, next) => {
+    try{
+        const boulders = await Boulder.find({grade : req.params.grade}).populate('author reviews');
+        return res.status(200).send(boulders);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({message: err});
+    }
+}
+
 exports.updateBoulder = async (req, res, next) => {
     console.log(req.params)
     console.log(`updating boulder with id: ${req.params.boulderId}`);
